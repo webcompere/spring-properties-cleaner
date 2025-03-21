@@ -16,6 +16,11 @@ public class Lines {
         return lines.stream().filter(not(String::isBlank)).collect(toList());
     }
 
+    /**
+     * Are all these lines the same?
+     * @param lines the lines to check
+     * @return true if all the same or none
+     */
     public static boolean allTheSame(Stream<String> lines) {
         return lines.distinct().count() <= 1;
     }

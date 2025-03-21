@@ -2,7 +2,6 @@ package uk.org.webcompere.spc.processor;
 
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
-import uk.org.webcompere.spc.model.Setting;
 import uk.org.webcompere.spc.parser.Parser;
 
 import java.io.File;
@@ -14,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static uk.org.webcompere.spc.parser.Lines.allTheSame;
+import static uk.org.webcompere.spc.processor.Scanner.scanForIssues;
 
 public class Processor {
 
@@ -38,15 +37,14 @@ public class Processor {
     }
 
     boolean process(File file) throws IOException {
-        List<String> errors = new ArrayList<>();
-        List<String> warnings = new ArrayList<>();
+        var propertiesFile = load(file);
 
-        loadAndScan(file, warnings, errors);
+        var scanResult = scanForIssues(propertiesFile);;
 
-        errors.forEach(System.err::println);
-        warnings.forEach(System.out::println);
+        scanResult.getErrors().forEach(System.err::println);
+        scanResult.getWarnings().forEach(System.out::println);
 
-        return errors.isEmpty();
+        return scanResult.getErrors().isEmpty();
     }
 
     boolean processDirectory(File directory, String prefix) throws IOException {
@@ -58,8 +56,13 @@ public class Processor {
                 .filter(file -> file.getName().toLowerCase().startsWith(prefix.toLowerCase()))
                 .collect(Collectors.toList());
 
+        List<PropertiesFile> loaded = new ArrayList<>();
         for (File file: toProcess) {
-            loadAndScan(file, warnings, errors);
+            var propertiesFile = load(file);
+            loaded.add(propertiesFile);
+            var result = scanForIssues(propertiesFile);
+            errors.addAll(result.getErrors());
+            warnings.addAll(result.getWarnings());
         }
 
         errors.forEach(System.err::println);
@@ -68,27 +71,12 @@ public class Processor {
         return errors.isEmpty();
     }
 
-    private PropertiesFile loadAndScan(File file, List<String> warnings, List<String> errors) throws IOException {
+    private PropertiesFile load(File file) throws IOException {
         PropertiesFile propertiesFile = new PropertiesFile(file.getName());
         Parser parser = new Parser(propertiesFile);
         try (var lines = Files.lines(file.toPath())) {
             lines.forEach(parser::parse);
         }
-
-        var duplicates = propertiesFile.getDuplicates();
-
-        duplicates.forEach((key, value) -> {
-            if (allTheSame(value.stream().map(Setting::getValue))) {
-                warnings.add(propertiesFile.getName() + ": " + key + " has duplicate value '" +
-                        value.get(0).getValue() + "' on " +
-                        value.stream().map(val -> "L" + val.getLine())
-                                .collect(Collectors.joining(",")));
-            } else {
-                errors.add(propertiesFile.getName() + ": " + key + " has duplicate values " +
-                        value.stream().map(val -> "L" + val.getLine() + ":'" + val.getValue() + "'")
-                                .collect(Collectors.joining(",")));
-            }
-        });
         return propertiesFile;
     }
 }

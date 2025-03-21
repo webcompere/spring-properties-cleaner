@@ -35,13 +35,14 @@ public class Parser {
 
         if (line.startsWith(COMMENT_CHAR) || line.isBlank()) {
             pendingComments.add(line);
-        }
-        Matcher matcher = PROPERTY_RECOGNISER.matcher(line);
-        if (!matcher.matches()) {
-            target.addError(lineNumber, line);
         } else {
-            target.add(new Setting(lineNumber, noBlankLines(pendingComments), matcher.group(1), matcher.group(2)));
-            pendingComments = new ArrayList<>();
+            Matcher matcher = PROPERTY_RECOGNISER.matcher(line);
+            if (!matcher.matches()) {
+                target.addError(lineNumber, line);
+            } else {
+                target.add(new Setting(lineNumber, noBlankLines(pendingComments), matcher.group(1), matcher.group(2)));
+                pendingComments = new ArrayList<>();
+            }
         }
     }
 

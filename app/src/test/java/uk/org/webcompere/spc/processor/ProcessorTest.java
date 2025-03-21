@@ -21,6 +21,8 @@ class ProcessorTest {
     private static final File EXAMPLE_WITH_DUPLICATE_IDENTICAL_PROPERTIES =
             Paths.get("src", "test", "resources", "example-with-duplicate-identical.properties").toFile();
     private static final File EXAMPLE_DIRECTORY = Paths.get("src", "test", "resources").toFile();
+    private static final File EXAMPLE_BROKEN =
+            Paths.get("src", "test", "resources", "broken", "broken.properties").toFile();
 
     @SystemStub
     private SystemErr systemErr = new SystemErr(tapAndOutput());
@@ -51,6 +53,14 @@ class ProcessorTest {
 
         assertThat(systemErr.getLines())
                 .contains("example-with-duplicate.properties: property1 has duplicate values L2:'foo',L7:'boo'");
+    }
+
+    @Test
+    void whenProcessingBrokenFileWithDuplicatesThenError() throws Exception {
+        assertThat(processor.process(EXAMPLE_BROKEN)).isFalse();
+
+        assertThat(systemErr.getLines())
+                .contains("broken.properties: non property 'aaaargh' on L1");
     }
 
     @Test
