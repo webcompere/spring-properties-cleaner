@@ -30,6 +30,8 @@ class ProcessorTest {
     @SystemStub
     private SystemOut systemOut = new SystemOut(tapAndOutput());
 
+    private SpcArgs emptyArgs = new SpcArgs();
+
     private Processor processor = new Processor();
 
     @Test
@@ -40,6 +42,18 @@ class ProcessorTest {
         assertThat(processor.execute(args)).isFalse();
 
         assertThat(systemErr.getLines()).contains("src/not a file does not exist");
+    }
+
+    @Test
+    void whenScanningExampleWithFixAndDryRunThenFixAppears() throws Exception {
+        SpcArgs args = new SpcArgs();
+        args.setAction(SpcArgs.Action.fix);
+        args.setRead(EXAMPLE_WITH_DUPLICATE_PROPERTIES.getAbsolutePath());
+
+        assertThat(processor.execute(args)).isTrue();
+
+        assertThat(systemOut.getLines()).contains("property1=boo");
+        assertThat(systemOut.getLines()).doesNotContain("property1=foo");
     }
 
     @Test
@@ -57,7 +71,8 @@ class ProcessorTest {
 
     @Test
     void whenProcessingBrokenFileWithDuplicatesThenError() throws Exception {
-        assertThat(processor.process(EXAMPLE_BROKEN)).isFalse();
+        assertThat(processor.process(EXAMPLE_BROKEN, emptyArgs))
+                .isFalse();
 
         assertThat(systemErr.getLines())
                 .contains("broken.properties: non property 'aaaargh' on L1");
@@ -65,7 +80,8 @@ class ProcessorTest {
 
     @Test
     void whenProcessingFileWithDuplicatesThenError() throws Exception {
-        assertThat(processor.process(EXAMPLE_WITH_DUPLICATE_PROPERTIES)).isFalse();
+        assertThat(processor.process(EXAMPLE_WITH_DUPLICATE_PROPERTIES, emptyArgs))
+                .isFalse();
 
         assertThat(systemErr.getLines())
                 .contains("example-with-duplicate.properties: property1 has duplicate values L2:'foo',L7:'boo'");
@@ -73,7 +89,8 @@ class ProcessorTest {
 
     @Test
     void whenProcessingFileWithDuplicateIdenticalPropertiesThenWarning() throws Exception {
-        assertThat(processor.process(EXAMPLE_WITH_DUPLICATE_IDENTICAL_PROPERTIES)).isTrue();
+        assertThat(processor.process(EXAMPLE_WITH_DUPLICATE_IDENTICAL_PROPERTIES, emptyArgs))
+                .isTrue();
 
         assertThat(systemOut.getLines())
                 .contains("example-with-duplicate-identical.properties: property1 has duplicate value 'foo' on L2,L7");

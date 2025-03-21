@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -69,5 +70,44 @@ public class PropertiesFile {
                 .stream()
                 .filter(entry -> entry.getValue().size() > 1)
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    /**
+     * Convert the file back into lines
+     * @return the file as series of lines - settings with preceding comments and then some trailing comments
+     */
+    public List<String> toLines() {
+        return Stream.concat(settings.stream()
+                        .flatMap(setting ->
+                                Stream.concat(setting.getPrecedingComments().stream(),
+                                        Stream.of(setting.getFullPath() + "=" + setting.getValue()))),
+                trailingComments.stream()).collect(toList());
+    }
+
+    /**
+     * Take a group of settings and collapse them into their last value - merging all comments
+     * @param fullPath the path to take
+     */
+    public void collapseIntoLast(String fullPath) {
+        int lastIndex = -1;
+        List<String> preceedingComments = new ArrayList<>();
+        for (int line = 0; line < settings.size(); line++) {
+            Setting setting = settings.get(line);
+            if (setting.getFullPath().equals(fullPath)) {
+                preceedingComments.addAll(setting.getPrecedingComments());
+                lastIndex = line;
+            }
+        }
+
+        if (lastIndex != -1) {
+            settings.get(lastIndex).setPrecedingComments(preceedingComments);
+        }
+
+        // go backwards and delete any of the predecessors
+        for (int delete = lastIndex - 1; delete >= 0; delete--) {
+            if (settings.get(delete).getFullPath().equals(fullPath)) {
+                settings.remove(delete);
+            }
+        }
     }
 }

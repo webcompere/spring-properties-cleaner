@@ -25,6 +25,19 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar --read path/to/resour
 
 A scan will exit with code 1 if the file contains duplicates with different values.
 
+We can fix things like duplicates:
+
+```bash
+java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --read path/to/resources
+```
+
+This will output new files to the consoles unless we add `--apply`
+
+```bash
+java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --apply --read path/to/resources
+```
+
+
 ## Build
 
 ```bash
@@ -35,3 +48,8 @@ A scan will exit with code 1 if the file contains duplicates with different valu
 ./gradlew shadowJar
 ```
 
+## TODO
+
+- Replace error lines with comments in the footer
+- Find common properties and shuffle them between files
+- Output everything in YAML!

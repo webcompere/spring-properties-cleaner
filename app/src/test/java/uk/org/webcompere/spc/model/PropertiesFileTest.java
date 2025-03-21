@@ -36,4 +36,41 @@ class PropertiesFileTest {
         assertThat(file.getDuplicates().get("server.port").stream().map(Setting::getValue))
                 .containsExactly("8080", "8081");
     }
+
+    @Test
+    void emptyFileConvertsToNoLines() {
+        assertThat(file.toLines()).isEmpty();
+    }
+
+    @Test
+    void fileWithOneSettingCreatesOneLine() {
+        file.add(new Setting(1, List.of(), "server.port", "8080"));
+
+        assertThat(file.toLines()).containsExactly("server.port=8080");
+    }
+
+    @Test
+    void fileWithOneSettingAndACommentCreatesTwoLines() {
+        file.add(new Setting(2, List.of("# comment"), "a", "b"));
+
+        assertThat(file.toLines()).containsExactly("# comment", "a=b");
+    }
+
+    @Test
+    void fileWithOneSettingAndTrailingCommentsCreatesLines() {
+        file.add(new Setting(1, List.of(), "server.port", "8080"));
+        file.addTrailingComments(List.of("", "# foobar"));
+
+        assertThat(file.toLines()).containsExactly("server.port=8080", "", "# foobar");
+    }
+
+    @Test
+    void collapseSettingsIntoLast() {
+        file.add(new Setting(1, List.of(), "server.port", "8080"));
+        file.add(new Setting(2, List.of(), "server.port", "8080"));
+
+        file.collapseIntoLast("server.port");
+
+        assertThat(file.toLines()).containsExactly("server.port=8080");
+    }
 }

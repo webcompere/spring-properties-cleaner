@@ -31,12 +31,12 @@ public class Processor {
         }
 
         if (file.isFile()) {
-            return process(file);
+            return process(file, request);
         }
-        return processDirectory(file, request.getPrefix());
+        return processDirectory(file, request);
     }
 
-    boolean process(File file) throws IOException {
+    boolean process(File file, SpcArgs request) throws IOException {
         var propertiesFile = load(file);
 
         var scanResult = scanForIssues(propertiesFile);;
@@ -44,10 +44,15 @@ public class Processor {
         scanResult.getErrors().forEach(System.err::println);
         scanResult.getWarnings().forEach(System.out::println);
 
+        if (request.getAction() == SpcArgs.Action.fix) {
+            return Fixer.fix(List.of(propertiesFile), List.of(scanResult), writer(request));
+        }
+
         return scanResult.getErrors().isEmpty();
     }
 
-    boolean processDirectory(File directory, String prefix) throws IOException {
+    boolean processDirectory(File directory, SpcArgs request) throws IOException {
+        String prefix = request.getPrefix();
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
 
@@ -57,16 +62,22 @@ public class Processor {
                 .collect(Collectors.toList());
 
         List<PropertiesFile> loaded = new ArrayList<>();
+        List<ScanResult> results = new ArrayList<>();
         for (File file: toProcess) {
             var propertiesFile = load(file);
             loaded.add(propertiesFile);
             var result = scanForIssues(propertiesFile);
+            results.add(result);
             errors.addAll(result.getErrors());
             warnings.addAll(result.getWarnings());
         }
 
         errors.forEach(System.err::println);
         warnings.forEach(System.out::println);
+
+        if (request.getAction() == SpcArgs.Action.fix) {
+            return Fixer.fix(loaded, results, writer(request));
+        }
 
         return errors.isEmpty();
     }
@@ -78,5 +89,12 @@ public class Processor {
             lines.forEach(parser::parse);
         }
         return propertiesFile;
+    }
+
+    public static Writer writer(SpcArgs request) {
+        if (request.isApply()) {
+            return new FileWriter();
+        }
+        return new ConsoleWriter();
     }
 }
