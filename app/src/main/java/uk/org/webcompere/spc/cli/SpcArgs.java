@@ -13,16 +13,27 @@ public class SpcArgs {
     public enum Action { scan, fix };
 
     @Parameter(
-            names = "--readDirectory",
-            description = "Directory with the properties files in",
+            names = "--help",
+            description = "Show usage"
+    )
+    private boolean help;
+
+    @Parameter(
+            names = "--read",
+            description = "A properties file or directory with properties files",
             required = true
     )
-    private String readDirectory;
+    private String read;
+
+    @Parameter(
+            names = "--prefix",
+            description = "When in directory mode, the prefix to read the properties files with - e.g. application"
+    )
+    private String prefix;
 
     @Parameter (
             names = "--action",
-            description = "Action to performance, scan or fix",
-            required = false
+            description = "Action to perform, scan or fix"
     )
     private Action action = Action.scan;
 }

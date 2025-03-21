@@ -38,6 +38,9 @@ dependencies {
     testImplementation("org.assertj:assertj-core:3.27.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.mockito:mockito-junit-jupiter:5.16.1")
+
+    // https://mvnrepository.com/artifact/uk.org.webcompere/system-stubs-jupiter
+    testImplementation("uk.org.webcompere:system-stubs-jupiter:2.1.7")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -49,7 +52,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "org.example.App"
+    mainClass = "uk.org.webcompere.spc.App"
 }
 
 tasks.named<Test>("test") {
