@@ -14,10 +14,16 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar --help
 And we can run it to scan a properties file:
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar --read path/to/myproperties.properties
+java -jar app/build/libs/spring-properties-cleaner-1.0.jar --read path/to/resources/myproperties.properties
 ```
 
-A scan will exit with code 1 if the file contains duplicates.
+or a directory of them:
+
+```bash
+java -jar app/build/libs/spring-properties-cleaner-1.0.jar --read path/to/resources
+```
+
+A scan will exit with code 1 if the file contains duplicates with different values.
 
 ## Build
 

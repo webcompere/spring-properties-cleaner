@@ -27,9 +27,9 @@ public class SpcArgs {
 
     @Parameter(
             names = "--prefix",
-            description = "When in directory mode, the prefix to read the properties files with - e.g. application"
+            description = "When in directory mode, the prefix to read the properties files with - e.g. application (default)"
     )
-    private String prefix;
+    private String prefix = "application";
 
     @Parameter (
             names = "--action",
