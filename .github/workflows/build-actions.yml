@@ -12,7 +12,7 @@ jobs:
         with:
           distribution: adopt-openj9
           java-version: 11
-          cache: maven
+          cache: gradle
       - run: ./gradlew build shadowJar
       - run: bash <(curl -s https://codecov.io/bash)
 
