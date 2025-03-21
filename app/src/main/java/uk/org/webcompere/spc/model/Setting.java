@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class Setting {
+    private int line;
     private List<String> precedingComments;
     private String fullPath;
     private String value;

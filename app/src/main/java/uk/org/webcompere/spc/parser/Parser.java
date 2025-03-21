@@ -7,10 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static uk.org.webcompere.spc.parser.Lines.noBlankLines;
 
 /**
@@ -43,7 +40,7 @@ public class Parser {
         if (!matcher.matches()) {
             target.addError(lineNumber, line);
         } else {
-            target.add(new Setting(noBlankLines(pendingComments), matcher.group(1), matcher.group(2)));
+            target.add(new Setting(lineNumber, noBlankLines(pendingComments), matcher.group(1), matcher.group(2)));
             pendingComments = new ArrayList<>();
         }
     }

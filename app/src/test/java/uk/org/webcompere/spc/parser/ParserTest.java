@@ -69,6 +69,14 @@ class ParserTest {
     }
 
     @Test
+    void whenAddASettingWithCommentBeforeThenLineNumberOfPropertyIsWhereThePropertyIsInFile() {
+        parser.parse("# The Spearsmo");
+        parser.parse("britney=spears");
+
+        assertThat(file.getSettings().get(0).getLine()).isEqualTo(2);
+    }
+
+    @Test
     void whenAddMultipleSettingsWithCommentBeforeThenCommentInsideSetting() {
         parser.parse("# The Spearsmo");
         parser.parse("britney=spears");
