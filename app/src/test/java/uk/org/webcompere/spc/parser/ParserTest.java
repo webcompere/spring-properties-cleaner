@@ -4,10 +4,12 @@ import org.junit.jupiter.api.Test;
 import uk.org.webcompere.spc.model.LineError;
 import uk.org.webcompere.spc.model.PropertiesFile;
 
+import java.io.File;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ParserTest {
-    private PropertiesFile file = new PropertiesFile("foo");
+    private PropertiesFile file = new PropertiesFile(new File("foo"));
 
     private Parser parser = new Parser(file);
 
@@ -58,6 +60,14 @@ class ParserTest {
 
         assertThat(file.getSettings().get(0).getFullPath()).isEqualTo("britney");
         assertThat(file.getSettings().get(0).getValue()).isEqualTo("spears");
+    }
+
+    @Test
+    void whenAddASettingWithSpacingThenIsTrimmed() {
+        parser.parse("sabrina = carpenter");
+
+        assertThat(file.getSettings().get(0).getFullPath()).isEqualTo("sabrina");
+        assertThat(file.getSettings().get(0).getValue()).isEqualTo("carpenter");
     }
 
     @Test

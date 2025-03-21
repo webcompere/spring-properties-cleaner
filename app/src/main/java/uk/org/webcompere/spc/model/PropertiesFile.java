@@ -2,6 +2,7 @@ package uk.org.webcompere.spc.model;
 
 import lombok.Getter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,17 +18,34 @@ import static java.util.stream.Collectors.toMap;
 public class PropertiesFile {
     private List<Setting> settings = new ArrayList<>();
     private List<String> trailingComments = new ArrayList<>();
-    private String name;
+    private File source;
+
     private List<LineError> lineErrors = new ArrayList<>();
 
-    public PropertiesFile(String name) {
-        this.name = name;
+    public PropertiesFile(File source) {
+        this.source = source;
     }
 
+    /**
+     * Derive the short name from the original filename
+     * @return the name
+     */
+    public String getName() {
+        return source.getName();
+    }
+
+    /**
+     * Add a setting read from the original file
+     * @param setting the setting
+     */
     public void add(Setting setting) {
         settings.add(setting);
     }
 
+    /**
+     * Store any comments from the footer of the file
+     * @param trailingComments the last comment lines in the file
+     */
     public void addTrailingComments(List<String> trailingComments) {
         this.trailingComments.addAll(trailingComments);
     }

@@ -2,12 +2,13 @@ package uk.org.webcompere.spc.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PropertiesFileTest {
-    private PropertiesFile file = new PropertiesFile("properties");
+    private PropertiesFile file = new PropertiesFile(new File("properties"));
 
     @Test
     void emptyFileHasNoDuplicates() {

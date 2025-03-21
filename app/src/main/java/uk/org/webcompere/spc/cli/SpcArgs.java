@@ -36,4 +36,10 @@ public class SpcArgs {
             description = "Action to perform, scan or fix"
     )
     private Action action = Action.scan;
+
+    @Parameter (
+            names = "--apply",
+            description = "Execute fix as a dry run (false - default) to console, or write to filesystem"
+    )
+    private boolean apply = false;
 }

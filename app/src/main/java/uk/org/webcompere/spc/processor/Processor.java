@@ -72,7 +72,7 @@ public class Processor {
     }
 
     private PropertiesFile load(File file) throws IOException {
-        PropertiesFile propertiesFile = new PropertiesFile(file.getName());
+        PropertiesFile propertiesFile = new PropertiesFile(file);
         Parser parser = new Parser(propertiesFile);
         try (var lines = Files.lines(file.toPath())) {
             lines.forEach(parser::parse);
