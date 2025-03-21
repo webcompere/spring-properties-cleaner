@@ -6,9 +6,16 @@
  */
 
 plugins {
-    // Apply the application plugin to add support for building a CLI application in Java.
-    application
+        application
+
+    // for fat jars
     id("com.github.johnrengelman.shadow") version "8.1.1"
+
+    // y'know, for coverage
+    jacoco
+
+    // fine, let's lombok thi
+    id("io.freefair.lombok") version "8.13"
 }
 
 repositories {
@@ -17,13 +24,20 @@ repositories {
 }
 
 dependencies {
-    // Use JUnit Jupiter for testing.
-    testImplementation(libs.junit.jupiter)
-
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
     // https://mvnrepository.com/artifact/com.beust/jcommander
     implementation("com.beust:jcommander:1.82")
+
+    // add in Lombok because I gave up
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
+    testCompileOnly("org.projectlombok:lombok:1.18.36")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
+
+    // Use JUnit Jupiter for testing.
+    testImplementation(libs.junit.jupiter)
+    testImplementation("org.assertj:assertj-core:3.27.3")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.16.1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -39,12 +53,26 @@ application {
 }
 
 tasks.named<Test>("test") {
-    // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.shadowJar {
     archiveBaseName.set("spring-properties-cleaner")
     archiveClassifier.set("")
     archiveVersion.set("1.0")
+}
+
+jacoco {
+    toolVersion = "0.8.12" // Ensure you're using the latest version
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // Ensure tests run before generating reports
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
 }
