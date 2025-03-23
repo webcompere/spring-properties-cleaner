@@ -33,6 +33,8 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.36")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
 
+    implementation("com.ibm.icu:icu4j:77.1")
+
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
     testImplementation("org.assertj:assertj-core:3.27.3")

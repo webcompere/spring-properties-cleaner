@@ -11,6 +11,7 @@ import lombok.ToString;
 public class SpcArgs {
 
     public enum Action { scan, fix };
+    public enum SortMode { none, sorted, clustered };
 
     @Parameter(
             names = "--help",
@@ -42,4 +43,11 @@ public class SpcArgs {
             description = "Execute fix as a dry run (false - default) to console, or write to filesystem"
     )
     private boolean apply = false;
+
+    @Parameter (
+            names = "--sort",
+            description = "How to sort the keys: 'sorted' (lexical order), 'clustered' (neighbours share a path, but the" +
+                    " original file order is preserved as much as possible, or 'none'"
+    )
+    private SortMode sort = SortMode.none;
 }

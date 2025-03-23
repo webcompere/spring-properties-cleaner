@@ -37,11 +37,21 @@ Fixing will:
   - adding together all commented lines directly before each duplicate
 - Remove spaces between properties and comments
 - Take all non-comment and non-property lines and add them as comments at the end of the file
+- Apply the chosen sort to the property lines
 
-This will output new files to the consoles unless we add `--apply`
+This will output new files to the console unless we add `--apply`
 
 ```bash
 java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --apply --read path/to/resources
+```
+
+For sorting we can choose the sort mode of `sorted`, `clustered` or `none`. In `sorted`, the properties
+are sorted lexically (respecting the value of numbers). In `clustered`, the original order of the file is preserved
+as much as possible while also bringing up values with matching paths to be together. `none` - the default - does
+nothing.
+
+```bash
+java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --sort clustered --read path/to/resources
 ```
 
 
@@ -57,6 +67,13 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --apply 
 
 ## TODO
 
-- Cluster/sort
 - Find common properties and shuffle them between files
-- Output everything in YAML!
+- Identify properties that wouldn't work in YAML as part of scan - e.g. `a.b.c` and `a.b.c.d` cannot be done as YAML
+- Output everything in YAML! (which will use default sort of clustered)
+  - in YAML mode allow for a minimum length of property to be tree-ified if solo
+- Find cheaper numeric comparator than ICM4J
+
+## Contributing
+
+This project is still incubating. Please feel free to raise issues with suggestions or questions. Not ready 
+to receive PRs at the moment.

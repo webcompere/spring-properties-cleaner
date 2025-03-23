@@ -1,6 +1,7 @@
 package uk.org.webcompere.spc.processor;
 
 import org.junit.jupiter.api.Test;
+import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
 
@@ -12,13 +13,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FixerTest {
 
+    private PropertiesFile file = new PropertiesFile(new File("foo"));
+    private int lineNumber = 1;
+
     @Test
     void mergesDuplicates() {
-        PropertiesFile file = new PropertiesFile(new File("foo"));
-        file.add(new Setting(1, List.of(), "key", "value"));
-        file.add(new Setting(2, List.of(), "key", "value"));
+        addLine("key", "value");
+        addLine("key", "value");
 
-        Fixer.fix(file);
+        Fixer.fix(file, new SpcArgs());
 
         assertThat(file.getSettings().size()).isEqualTo(1);
 
@@ -29,13 +32,12 @@ class FixerTest {
 
     @Test
     void putsErrorLinesAtTheEndOfTheErrorsFooter() {
-        PropertiesFile file = new PropertiesFile(new File("foo"));
 
         file.addError(1, "broken");
         file.addError(2, "also broken");
         file.addTrailingComments(List.of("# foo", "# bar"));
 
-        Fixer.fix(file);
+        Fixer.fix(file, new SpcArgs());
 
         assertThat(file.getLineErrors()).isEmpty();
         assertThat(file.getTrailingComments()).containsExactly(
@@ -44,5 +46,120 @@ class FixerTest {
                 "# 1: broken",
                 "# 2: also broken"
         );
+    }
+
+    @Test
+    void whenNoSortThenFixerDoesNotChangeOrderOfKeys() {
+        addLine("zebra", "crossing");
+        addLine("anteater", "nosey");
+
+        Fixer.fix(file, new SpcArgs());
+
+        assertThat(file.getSettings().stream().map(Setting::getFullPath)).containsExactly("zebra", "anteater");
+    }
+
+    @Test
+    void whenSortThenFixerChangesOrderOfKeys() {
+        addLine("zebra", "crossing");
+        addLine("anteater", "nosey");
+
+        var args = new SpcArgs();
+        args.setSort(SpcArgs.SortMode.sorted);
+
+        Fixer.fix(file, args);
+
+        assertThat(file.getSettings().stream().map(Setting::getFullPath)).containsExactly("anteater", "zebra");
+    }
+
+    @Test
+    void whenSortThenNumericOrderIsCorrect() {
+        addLine("zebra9", "crossing");
+        addLine("zebra1", "crossing");
+        addLine("zebra100", "crossing");
+        addLine("zebra52", "crossing");
+        addLine("anteater", "nosey");
+
+        var args = new SpcArgs();
+        args.setSort(SpcArgs.SortMode.sorted);
+
+        Fixer.fix(file, args);
+
+        assertThat(file.getSettings().stream().map(Setting::getFullPath))
+                .containsExactly("anteater",
+                        "zebra1",
+                        "zebra9",
+                        "zebra52",
+                        "zebra100");
+    }
+
+    @Test
+    void whenSortedThenPathsAreInOrder() {
+        addLine("path.to.property1", "scooby");
+        addLine("otherPath.to.thefuture", "scooby");
+        addLine("path.to.property9", "scooby");
+        addLine("otherPath.to.property", "scooby");
+
+        var args = new SpcArgs();
+        args.setSort(SpcArgs.SortMode.sorted);
+
+        Fixer.fix(file, args);
+
+        assertThat(file.getSettings().stream().map(Setting::getFullPath))
+                .containsExactly(
+                        "otherPath.to.property",
+                        "otherPath.to.thefuture",
+                        "path.to.property1",
+                        "path.to.property9");
+    }
+
+    @Test
+    void whenClusteredThenPathsAreMoved() {
+        addLine("path.to.property1", "scooby");
+        addLine("otherPath.to.thefuture", "scooby");
+        addLine("path.to.property9", "scooby");
+        addLine("otherPath.to.property", "scooby");
+
+        var args = new SpcArgs();
+        args.setSort(SpcArgs.SortMode.clustered);
+
+        Fixer.fix(file, args);
+
+        assertThat(file.getSettings().stream().map(Setting::getFullPath))
+                .containsExactly("path.to.property1",
+                        "path.to.property9",
+                        "otherPath.to.thefuture",
+                        "otherPath.to.property");
+    }
+
+    @Test
+    void whenClusteredWithMixedLengthsThenPathsAreMoved() {
+        addLine("server.port", "8080");
+        addLine("path.to.property1", "scooby");
+        addLine("otherPath.to.thefuture", "scooby");
+        addLine("path.to.property9", "scooby");
+        addLine("otherPath.to.property", "scooby");
+        addLine("server.skip", "false");
+        addLine("a.b.c.d.e", "abcde");
+        addLine("a.b.c.d", "abcd");
+
+        var args = new SpcArgs();
+        args.setSort(SpcArgs.SortMode.clustered);
+
+        Fixer.fix(file, args);
+
+        assertThat(file.getSettings().stream().map(Setting::getFullPath))
+                .containsExactly(
+                        "server.port",
+                        "server.skip",
+                        "path.to.property1",
+                        "path.to.property9",
+                        "otherPath.to.thefuture",
+                        "otherPath.to.property",
+                        "a.b.c.d.e",
+                        "a.b.c.d");
+    }
+
+    private void addLine(String key, String value) {
+        file.add(new Setting(lineNumber++, List.of(), key, value));
     }
 }

@@ -5,8 +5,10 @@ import lombok.Getter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -120,5 +122,22 @@ public class PropertiesFile {
         var errors = lineErrors;
         lineErrors = new ArrayList<>();
         return errors;
+    }
+
+    /**
+     * Apply a sort to the keys of the settings
+     * @param sort the comparator of the sort
+     */
+    public void sortSettings(Comparator<Object> sort) {
+        settings.sort(Comparator.comparing(Setting::getFullPath, sort));
+    }
+
+
+    /**
+     * Allow the settings to be rewritten
+     * @param rewriter function to process settings
+     */
+    public void rewriteSettings(Function<List<Setting>, List<Setting>> rewriter) {
+        settings = rewriter.apply(settings);
     }
 }
