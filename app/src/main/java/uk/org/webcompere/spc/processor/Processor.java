@@ -45,7 +45,7 @@ public class Processor {
         scanResult.getWarnings().forEach(System.out::println);
 
         if (request.getAction() == SpcArgs.Action.fix) {
-            return Fixer.fix(List.of(propertiesFile), List.of(scanResult), writer(request));
+            return Fixer.fix(List.of(propertiesFile), request, writer(request));
         }
 
         return scanResult.getErrors().isEmpty();
@@ -76,7 +76,7 @@ public class Processor {
         warnings.forEach(System.out::println);
 
         if (request.getAction() == SpcArgs.Action.fix) {
-            return Fixer.fix(loaded, results, writer(request));
+            return Fixer.fix(loaded, request, writer(request));
         }
 
         return errors.isEmpty();
@@ -91,6 +91,11 @@ public class Processor {
         return propertiesFile;
     }
 
+    /**
+     * Create the appropriate writer from the config
+     * @param request the request from the command line
+     * @return either a real writer or a console writer
+     */
     public static Writer writer(SpcArgs request) {
         if (request.isApply()) {
             return new FileWriter();

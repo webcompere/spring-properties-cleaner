@@ -1,5 +1,6 @@
 package uk.org.webcompere.spc.model;
 
+import com.beust.ah.A;
 import lombok.Getter;
 
 import java.io.File;
@@ -109,5 +110,15 @@ public class PropertiesFile {
                 settings.remove(delete);
             }
         }
+    }
+
+    /**
+     * Remove all errors, returning the ones we have before to the caller
+     * @return all line errors
+     */
+    public List<LineError> extractErrors() {
+        var errors = lineErrors;
+        lineErrors = new ArrayList<>();
+        return errors;
     }
 }

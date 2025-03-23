@@ -25,11 +25,18 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar --read path/to/resour
 
 A scan will exit with code 1 if the file contains duplicates with different values.
 
-We can fix things like duplicates:
+We can fix things:
 
 ```bash
 java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --read path/to/resources
 ```
+
+Fixing will:
+
+- Coalesce duplicates into a single entry - the last value provided
+  - adding together all commented lines directly before each duplicate
+- Remove spaces between properties and comments
+- Take all non-comment and non-property lines and add them as comments at the end of the file
 
 This will output new files to the consoles unless we add `--apply`
 
@@ -50,6 +57,6 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --apply 
 
 ## TODO
 
-- Replace error lines with comments in the footer
+- Cluster/sort
 - Find common properties and shuffle them between files
 - Output everything in YAML!
