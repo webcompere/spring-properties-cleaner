@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -139,5 +142,46 @@ public class PropertiesFile {
      */
     public void rewriteSettings(Function<List<Setting>, List<Setting>> rewriter) {
         settings = rewriter.apply(settings);
+    }
+
+    /**
+     * Find the last value of a property by its full path
+     * @param path path of the property
+     * @return the value or empty if not found
+     */
+    public Optional<String> getLast(String path) {
+        return IntStream.range(0, settings.size())
+                .mapToObj(i -> settings.get(settings.size() - 1 - i))
+                .filter(setting -> setting.getFullPath().equals(path))
+                .map(Setting::getValue)
+                .findFirst();
+    }
+
+    /**
+     * Remove the property with this name
+     * @param path the path to remove
+     */
+    public void remove(String path) {
+        remove(setting -> setting.getFullPath().equals(path));
+    }
+
+    /**
+     * Remove the property with this name if it contains the expected value
+     * @param path the path to remove
+     * @param expectedValue the expectedValue to remove, otherwise leave it alone
+     */
+    public void removeIf(String path, String expectedValue) {
+        remove(setting -> setting.getFullPath().equals(path) && setting.getValue().equals(expectedValue));
+    }
+
+    private void remove(Predicate<Setting> predicate) {
+        int i = 0;
+        while (i < settings.size()) {
+            if (predicate.test(settings.get(i))) {
+                settings.remove(i);
+            } else {
+                i++;
+            }
+        }
     }
 }

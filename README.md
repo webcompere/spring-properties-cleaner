@@ -54,6 +54,23 @@ nothing.
 java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --sort clustered --read path/to/resources
 ```
 
+If we have multiple environments then we may have properties files:
+
+- `application.properties`
+- `application-dev.properties`
+- `application-prod.properties`
+
+For this we can use `--common` to find values that are the same and bring them into the root properties file. There are
+multiple modes:
+
+- `none` - don't do it
+- `full` - find identical values present in all files and bring them into the root properties file
+- `consistent` - find values which are in more than one place and always the same wherever they appear
+- `multiple` - find values that are in more than one place and bring them into the root properties, even if they're different in some places
+
+```bash
+java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --common full --read path/to/resources
+```
 
 ## Build
 
@@ -67,7 +84,7 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --sort c
 
 ## TODO
 
-- Find common properties and shuffle them between files
+- Promoted common file needs to be sorted
 - Identify properties that wouldn't work in YAML as part of scan - e.g. `a.b.c` and `a.b.c.d` cannot be done as YAML
 - Output everything in YAML! (which will use default sort of clustered)
   - in YAML mode allow for a minimum length of property to be tree-ified if solo

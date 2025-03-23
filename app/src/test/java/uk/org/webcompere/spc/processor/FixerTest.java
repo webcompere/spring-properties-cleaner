@@ -1,6 +1,9 @@
 package uk.org.webcompere.spc.processor;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
@@ -9,12 +12,17 @@ import java.io.File;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.BDDMockito.then;
 
-
+@ExtendWith(MockitoExtension.class)
 class FixerTest {
 
     private PropertiesFile file = new PropertiesFile(new File("foo"));
     private int lineNumber = 1;
+
+    @Mock
+    private Writer writer;
 
     @Test
     void mergesDuplicates() {
@@ -157,6 +165,19 @@ class FixerTest {
                         "otherPath.to.property",
                         "a.b.c.d.e",
                         "a.b.c.d");
+    }
+
+    @Test
+    void whenConfiguredForCommonACommonFileCanAppear() throws Exception {
+        PropertiesFile file1 = new PropertiesFile(new File("application-dev.properties"));
+        PropertiesFile file2 = new PropertiesFile(new File("application-prod.properties"));
+
+        SpcArgs args = new SpcArgs();
+        args.setCommonProperties(SpcArgs.CommonPropertiesMode.multiple);
+        Fixer.fix(List.of(file1, file2), args, writer);
+
+        // then a properties file for common should have appeared
+        then(writer).should().writeAll(argThat(list -> list.size() == 3));
     }
 
     private void addLine(String key, String value) {
