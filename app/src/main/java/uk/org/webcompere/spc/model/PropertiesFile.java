@@ -134,7 +134,7 @@ public class PropertiesFile {
      * Apply a sort to the keys of the settings
      * @param sort the comparator of the sort
      */
-    public void sortSettings(Comparator<Object> sort) {
+    public void sortSettings(Comparator<CharSequence> sort) {
         settings.sort(Comparator.comparing(Setting::getFullPath, sort));
     }
 

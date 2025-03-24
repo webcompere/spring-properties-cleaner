@@ -1,7 +1,6 @@
 package uk.org.webcompere.spc.processor;
 
-import com.ibm.icu.text.Collator;
-import com.ibm.icu.text.RuleBasedCollator;
+import se.sawano.java.text.AlphanumericComparator;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
@@ -86,10 +85,7 @@ public class Sorting {
         return Arrays.stream(setting.getFullPathParts()).limit(depth).collect(Collectors.joining("."));
     }
 
-    public static Comparator<Object> createSort() {
-        RuleBasedCollator collator = (RuleBasedCollator) Collator.getInstance(Locale.US);
-        collator.setNumericCollation(true);
-        collator.setStrength(Collator.PRIMARY);
-        return collator;
+    public static Comparator<CharSequence> createSort() {
+        return new AlphanumericComparator(Locale.ENGLISH);
     }
 }
