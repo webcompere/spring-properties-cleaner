@@ -71,6 +71,14 @@ class ParserTest {
     }
 
     @Test
+    void whenAddASettingWithInterpolationThenInterpolationSurvives() {
+        parser.parse("sabrina=${carpenter}");
+
+        assertThat(file.getSettings().get(0).getFullPath()).isEqualTo("sabrina");
+        assertThat(file.getSettings().get(0).getValue()).isEqualTo("${carpenter}");
+    }
+
+    @Test
     void whenAddASettingWithCommentBeforeThenCommentInsideSetting() {
         parser.parse("# The Spearsmo");
         parser.parse("britney=spears");

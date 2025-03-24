@@ -14,7 +14,7 @@ import static uk.org.webcompere.spc.parser.Lines.noBlankLines;
  * Parses a properties file line by line
  */
 public class Parser {
-    private static final Pattern PROPERTY_RECOGNISER = Pattern.compile("([a-zA-Z0-9_.-]+)\\W*=\\W*(.*)");
+    private static final Pattern PROPERTY_RECOGNISER = Pattern.compile("([a-zA-Z0-9_.-]+)\\s*=\\s*(.*)");
     private static final String COMMENT_CHAR = "#";
 
     private PropertiesFile target;
