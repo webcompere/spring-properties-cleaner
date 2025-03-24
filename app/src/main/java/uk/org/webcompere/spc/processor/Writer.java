@@ -1,5 +1,6 @@
 package uk.org.webcompere.spc.processor;
 
+import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 
 import java.io.File;
@@ -14,11 +15,15 @@ public interface Writer {
     /**#
      * Write all the files
      * @param propertiesFiles files to write
+     * @param sortMode the sort mode used on the files
+     * @param isYml to write in YML?
      * @throws IOException on file error
      */
-    default void writeAll(List<PropertiesFile> propertiesFiles) throws IOException {
+    default void writeAll(List<PropertiesFile> propertiesFiles,
+                          SpcArgs.SortMode sortMode, boolean isYml) throws IOException {
         for (var file: propertiesFiles) {
-            write(file.getSource(), file.toLines());
+            write(Converter.targetFile(file.getSource(), isYml),
+                    Converter.toLines(file, sortMode, isYml));
         }
     }
 

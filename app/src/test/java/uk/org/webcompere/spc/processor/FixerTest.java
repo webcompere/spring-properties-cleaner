@@ -12,6 +12,8 @@ import java.io.File;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.then;
 
@@ -177,7 +179,7 @@ class FixerTest {
         Fixer.fix(List.of(file1, file2), args, writer);
 
         // then a properties file for common should have appeared
-        then(writer).should().writeAll(argThat(list -> list.size() == 3));
+        then(writer).should().writeAll(argThat(list -> list.size() == 3), any(), anyBoolean());
     }
 
     private void addLine(String key, String value) {

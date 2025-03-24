@@ -63,4 +63,10 @@ public class SpcArgs {
     )
     private boolean apply = false;
 
+    @Parameter (
+            names = "--yml",
+            description = "Convert the file(s) to YML when action is 'fix'. This will use a default sort mode of " +
+                    "'clustered', though this can be overridden with '--sort sorted' if required"
+    )
+    private boolean yml = false;
 }

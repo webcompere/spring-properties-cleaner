@@ -2,6 +2,7 @@ package uk.org.webcompere.spc.processor;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
 
@@ -22,7 +23,7 @@ class FileWriterTest {
         PropertiesFile file = new PropertiesFile(new File(tempDir, "application.props"));
         file.add(new Setting(1, List.of(), "foo", "bar"));
 
-        fileWriter.writeAll(List.of(file));
+        fileWriter.writeAll(List.of(file), SpcArgs.SortMode.none, false);
 
         assertThat(file.getSource()).hasContent("foo=bar");
     }
