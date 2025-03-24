@@ -84,7 +84,6 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar --action fix --common
 
 ## TODO
 
-- Promoted common file needs to be sorted
 - Identify properties that wouldn't work in YAML as part of scan - e.g. `a.b.c` and `a.b.c.d` cannot be done as YAML
 - Output everything in YAML! (which will use default sort of clustered)
   - in YAML mode allow for a minimum length of property to be tree-ified if solo

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -72,5 +73,30 @@ class PropertiesFileTest {
         file.collapseIntoLast("server.port");
 
         assertThat(file.toLines()).containsExactly("server.port=8080");
+    }
+
+    @Test
+    void removeIf() {
+        file.add(new Setting(1, List.of(), "server.port", "8080"));
+        file.add(new Setting(2, List.of(), "server.port", "8080"));
+        file.add(new Setting(3, List.of(), "server.port", "8081"));
+
+        file.removeIf("server.port", "8080");
+
+        assertThat(file.getSettings()).hasSize(1);
+        assertThat(file.getLast("server.port")).hasValue("8081");
+    }
+
+    @Test
+    void duplicatesComeInFileOrder() {
+        file.add(new Setting(1, List.of(), "server.port", "8080"));
+        file.add(new Setting(2, List.of(), "server.port", "8080"));
+        file.add(new Setting(3, List.of(), "app.name", "myApp"));
+        file.add(new Setting(4, List.of(), "app.name", "myApp"));
+        file.add(new Setting(5, List.of(), "local.host", "localhost"));
+        file.add(new Setting(6, List.of(), "local.host", "localhost"));
+
+        assertThat(file.getDuplicates().entrySet().stream().map(Map.Entry::getKey))
+                .containsExactly("server.port", "app.name", "local.host");
     }
 }

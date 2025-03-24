@@ -7,9 +7,8 @@ import uk.org.webcompere.spc.model.PropertiesFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static uk.org.webcompere.spc.processor.Grouping.createSort;
-
 public class Fixer {
+
     /**
      * Fix the files and write them out
      * @param propertiesFiles the files
@@ -49,15 +48,7 @@ public class Fixer {
                 .map(error -> "# " + error.getLine() + ": " + error.getContent())
                 .collect(Collectors.toList()));
 
-        switch (config.getSort()) {
-            case sorted:
-                file.sortSettings(createSort());
-                break;
-
-            case clustered:
-                file.rewriteSettings(Grouping::clusterSettings);
-                break;
-        }
+        Sorting.applySort(file, config.getSort());
     }
 
 }

@@ -41,14 +41,14 @@ public class CommonSettings {
                 .collect(toList());
 
         // shuffle properties around
-        combineProperties(commonFile, otherFiles, config.getCommonProperties());
+        combineProperties(commonFile, otherFiles, config.getCommonProperties(), config.getSort());
 
         // then put the files together
         return Stream.concat(Stream.of(commonFile), otherFiles.stream()).collect(toList());
     }
 
     private static void combineProperties(PropertiesFile commonFile, List<PropertiesFile> otherFiles,
-                                          SpcArgs.CommonPropertiesMode mode) {
+                                          SpcArgs.CommonPropertiesMode mode, SpcArgs.SortMode sortMode) {
         PropertiesFile superProperties = new PropertiesFile(new File("super"));
         otherFiles.stream().map(PropertiesFile::getSettings).flatMap(List::stream).forEach(superProperties::add);
 
@@ -57,6 +57,8 @@ public class CommonSettings {
         duplicates.forEach((key, values) -> {
             combineProperties(commonFile, otherFiles, key, values, mode);
         });
+
+        Sorting.applySort(commonFile, sortMode);
     }
 
     private static void combineProperties(PropertiesFile commonFile, List<PropertiesFile> otherFiles,

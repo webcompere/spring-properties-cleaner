@@ -2,6 +2,8 @@ package uk.org.webcompere.spc.processor;
 
 import com.ibm.icu.text.Collator;
 import com.ibm.icu.text.RuleBasedCollator;
+import uk.org.webcompere.spc.cli.SpcArgs;
+import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
 
 import java.util.ArrayList;
@@ -11,9 +13,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class Grouping {
+public class Sorting {
 
-    public static List<Setting> clusterSettings(List<Setting> settings) {
+    /**
+     * Apply the chosen sort to the file
+     * @param file file to sort
+     * @param sort the sort type
+     */
+    public static void applySort(PropertiesFile file, SpcArgs.SortMode sort) {
+        switch (sort) {
+            case sorted:
+                file.sortSettings(createSort());
+                break;
+
+            case clustered:
+                file.rewriteSettings(Sorting::clusterSettings);
+                break;
+        }
+    }
+
+    private static List<Setting> clusterSettings(List<Setting> settings) {
         int maxPath = settings.stream().mapToInt(setting -> setting.getFullPathParts().length)
                 .max()
                 .orElse(0);

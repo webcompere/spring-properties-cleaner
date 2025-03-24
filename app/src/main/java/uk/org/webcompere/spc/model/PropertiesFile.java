@@ -6,6 +6,7 @@ import lombok.Getter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,11 +72,13 @@ public class PropertiesFile {
      * @return the duplicates by key
      */
     public Map<String, List<Setting>> getDuplicates() {
-        return settings.stream().collect(groupingBy(Setting::getFullPath, toList()))
+        return settings.stream().collect(groupingBy(Setting::getFullPath, LinkedHashMap::new, toList()))
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().size() > 1)
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (a, b) -> a,
+                        LinkedHashMap::new));
     }
 
     /**

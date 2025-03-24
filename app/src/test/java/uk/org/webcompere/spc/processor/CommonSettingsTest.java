@@ -7,6 +7,7 @@ import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
 
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -190,6 +191,38 @@ class CommonSettingsTest {
 
 
         assertThat(commonResult.getLast(commonProperty)).isEmpty();
+    }
+
+    @Test
+    void whenNoSortingIsOnThenCommonPropertiesFileInNaturalOrder() {
+        var someProperties = new LinkedHashMap<String, String>();
+        someProperties.put("server.port", "8080");
+        someProperties.put("local.host.name", "localhost");
+        someProperties.put("local.application", "myApp");
+
+        PropertiesFile dev = createFile("application-dev.properties", someProperties);
+        PropertiesFile staging = createFile("application-staging.properties", someProperties);
+
+        List<PropertiesFile> result = CommonSettings.process(List.of(dev, staging), multipleArgs);
+        var commonResult = result.get(0);
+
+        assertThat(commonResult.getSettings().stream().map(Setting::getFullPath))
+                .containsExactly("server.port", "local.host.name", "local.application");
+    }
+
+    @Test
+    void whenSortingIsOnThenCommonPropertiesFileGetsSorted() {
+        var someProperties = Map.of("server.port", "8080", "local.host.name", "localhost", "local.application", "myApp");
+        PropertiesFile dev = createFile("application-dev.properties", someProperties);
+        PropertiesFile staging = createFile("application-staging.properties", someProperties);
+
+        multipleArgs.setSort(SpcArgs.SortMode.sorted);
+
+        List<PropertiesFile> result = CommonSettings.process(List.of(dev, staging), multipleArgs);
+        var commonResult = result.get(0);
+
+        assertThat(commonResult.getSettings().stream().map(Setting::getFullPath))
+                .containsExactly("local.application", "local.host.name", "server.port");
     }
 
     private PropertiesFile createFile(String name, Map<String, String> properties) {
