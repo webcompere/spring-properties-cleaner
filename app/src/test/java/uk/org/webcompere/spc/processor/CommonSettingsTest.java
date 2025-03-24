@@ -6,13 +6,12 @@ import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
 
-import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.org.webcompere.spc.model.PropertiesFileFactory.createFile;
 
 class CommonSettingsTest {
 
@@ -225,11 +224,4 @@ class CommonSettingsTest {
                 .containsExactly("local.application", "local.host.name", "server.port");
     }
 
-    private PropertiesFile createFile(String name, Map<String, String> properties) {
-        PropertiesFile propertiesFile = new PropertiesFile(new File(name));
-        AtomicInteger lineNumber = new AtomicInteger(1);
-        properties.forEach((key, value) -> propertiesFile.add(
-                new Setting(lineNumber.getAndIncrement(), List.of(), key, value)));
-        return propertiesFile;
-    }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 public class ScanResult {
     private List<String> errors = new ArrayList<>();
     private List<String> warnings = new ArrayList<>();
+    private boolean telescopingProperties = false;
 
     private List<String> duplicateKeys = new ArrayList<>();
 
