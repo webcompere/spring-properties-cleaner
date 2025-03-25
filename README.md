@@ -112,7 +112,13 @@ provided sort mode, defaulting to `clustered` if a sort is not provided.
 
 ## TODO
 
+- Create mvn plugin for both scanning and fixing
 - In YAML mode allow for a minimum length of property to be tree-ified if solo
+- In YAML handle telescoping properties like this:
+  ```yml
+  server: myServer
+  server.port: 8080
+  ```
 
 ## Contributing
 
