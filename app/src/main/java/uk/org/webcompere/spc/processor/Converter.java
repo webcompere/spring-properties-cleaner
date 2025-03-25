@@ -48,12 +48,22 @@ public class Converter {
     }
 
     private static Stream<String> toYmlStream(PropertiesFile file, SpcArgs.SortMode sortMode) {
+        enforceFileIsSortedSomehow(file, sortMode);
+
+        Setting blank = new Setting(0, List.of(), "", "");
+
+        return Stream.concat(
+                // properties as YML lines
+                toYmlStream(Stream.concat(Stream.of(blank), file.getSettings().stream())),
+
+                // trailing comments
+                file.getTrailingComments().stream());
+    }
+
+    private static void enforceFileIsSortedSomehow(PropertiesFile file, SpcArgs.SortMode sortMode) {
         if (sortMode == SpcArgs.SortMode.none) {
             Sorting.applySort(file, SpcArgs.SortMode.clustered);
         }
-
-        Setting blank = new Setting(0, List.of(), "", "");
-        return toYmlStream(Stream.concat(Stream.of(blank), file.getSettings().stream()));
     }
 
     private static Stream<String> toYmlStream(Stream<Setting> settingsWithHeader) {

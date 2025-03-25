@@ -104,4 +104,19 @@ class ConverterTest {
                 "  # this is the address",
                 "  address: 127.0.0.1");
     }
+
+    @Test
+    void propertiesFileWithTrailingCommentsOutputInYml() {
+        PropertiesFile file = createFile("testfile", Map.of("server.port", "8080", "server.name", "myserver"));
+        file.addTrailingComments(List.of("# trailing one", "", "# trailing two"));
+        file.sortSettings(Sorting.createSort());
+
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true)).containsExactly(
+                "server:",
+                "  name: myserver",
+                "  port: 8080",
+                "# trailing one",
+                "",
+                "# trailing two");
+    }
 }
