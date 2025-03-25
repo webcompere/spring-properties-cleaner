@@ -23,6 +23,8 @@ class ProcessorTest {
     private static final File EXAMPLE_DIRECTORY = Paths.get("src", "test", "resources").toFile();
     private static final File EXAMPLE_BROKEN =
             Paths.get("src", "test", "resources", "broken", "broken.properties").toFile();
+    private static final File EXAMPLE_TELESCOPING_PROPERTIES =
+            Paths.get("src", "test", "resources", "broken", "telescoping.properties").toFile();
 
     @SystemStub
     private SystemErr systemErr = new SystemErr(tapAndOutput());
@@ -94,5 +96,30 @@ class ProcessorTest {
 
         assertThat(systemOut.getLines())
                 .contains("example-with-duplicate-identical.properties: property1 has duplicate value 'foo' on L2,L7");
+    }
+
+    @Test
+    void cannotProcessFileWithTelescopingPropertiesToYML() throws Exception {
+        SpcArgs args = new SpcArgs();
+        args.setYml(true);
+        args.setAction(SpcArgs.Action.fix);
+        assertThat(processor.process(EXAMPLE_TELESCOPING_PROPERTIES, args))
+                .isFalse();
+
+        assertThat(systemErr.getLines())
+                .contains("Cannot convert to YML owing to telescoping properties");
+    }
+
+    @Test
+    void cannotProcessDirectoryWithTelescopingPropertiesToYML() throws Exception {
+        SpcArgs args = new SpcArgs();
+        args.setYml(true);
+        args.setAction(SpcArgs.Action.fix);
+        args.setPrefix("telescoping");
+        assertThat(processor.processDirectory(EXAMPLE_TELESCOPING_PROPERTIES.getParentFile(), args))
+                .isFalse();
+
+        assertThat(systemErr.getLines())
+                .contains("Cannot convert to YML owing to telescoping properties");
     }
 }

@@ -45,6 +45,11 @@ public class Processor {
         scanResult.getWarnings().forEach(System.out::println);
 
         if (request.getAction() == SpcArgs.Action.fix) {
+            if (request.isYml() && scanResult.isTelescopingProperties()) {
+                System.err.println("Cannot convert to YML owing to telescoping properties");
+                return false;
+            }
+
             return Fixer.fix(List.of(propertiesFile), request, writer(request));
         }
 
@@ -76,6 +81,10 @@ public class Processor {
         warnings.forEach(System.out::println);
 
         if (request.getAction() == SpcArgs.Action.fix) {
+            if (request.isYml() && results.stream().anyMatch(ScanResult::isTelescopingProperties)) {
+                System.err.println("Cannot convert to YML owing to telescoping properties");
+                return false;
+            }
             return Fixer.fix(loaded, request, writer(request));
         }
 

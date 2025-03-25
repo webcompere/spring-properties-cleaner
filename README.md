@@ -97,6 +97,9 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
 We can also provide `--yml` to get the _fixed_ files to be written in YML format. This will use the
 provided sort mode, defaulting to `clustered` if a sort is not provided.
 
+> NOTE: YML Cannot be generated if properties are telescoping. E.g. `server` and `server.port` cannot both
+> be in the same YAML. This will be warned on a scan.
+
 ## Build
 
 ```bash
