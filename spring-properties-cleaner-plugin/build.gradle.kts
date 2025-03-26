@@ -6,17 +6,12 @@
  */
 
 plugins {
-    application
-
-    // for fat jars
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("org.gradlex.maven-plugin-development") version "1.0.3"
 
     // y'know, for coverage
     jacoco
 
-    id("jacoco-report-aggregation")
-
-    // fine, let's lombok this stupid set of POJOs
+    // fine, let's lombok this one too
     id("io.freefair.lombok") version "8.13"
 
     `maven-publish`
@@ -29,7 +24,11 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/com.beust/jcommander
-    implementation("com.beust:jcommander:1.82")
+    implementation(project(":app"))
+
+    implementation("org.apache.maven:maven-plugin-api:3.6.3")
+    compileOnly("org.apache.maven.plugin-tools:maven-plugin-annotations:3.6.4")
+    implementation("org.apache.maven:maven-project:2.2.1")
 
     // add in Lombok because I gave up
     compileOnly("org.projectlombok:lombok:1.18.36")
@@ -37,15 +36,22 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.36")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
 
-    implementation("se.sawano.java:alphanumeric-comparator:2.0.0")
-
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
     testImplementation("org.assertj:assertj-core:3.27.3")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
     testImplementation("org.mockito:mockito-junit-jupiter:5.16.1")
 
     testImplementation("uk.org.webcompere:system-stubs-jupiter:2.1.7")
+    testImplementation("org.apache.maven:maven-core:3.6.3")
+}
+
+mavenPlugin {
+    name = "Spring Properties Cleaner Plugin"
+    artifactId = "spring-properties-cleaner-plugin"
+    groupId = "uk.org.webcompere"
+    version = "1.0.0"
+    description = project.description
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -55,20 +61,9 @@ java {
     }
 }
 
-application {
-    // Define the main class for the application.
-    mainClass = "uk.org.webcompere.spc.App"
-}
-
 tasks.named<Test>("test") {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
-}
-
-tasks.shadowJar {
-    archiveBaseName.set("spring-properties-cleaner")
-    archiveClassifier.set("")
-    archiveVersion.set("1.0")
 }
 
 jacoco {
@@ -89,12 +84,10 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "uk.org.webcompere"
-            artifactId = "spring-properties-cleaner-app"
+            artifactId = "spring-properties-cleaner-plugin"
             version = "1.0.0"
 
-            artifact(tasks.shadowJar.get()) {
-                classifier = null // Ensures it replaces the main JAR
-            }
+            from(components["java"])
         }
     }
 }

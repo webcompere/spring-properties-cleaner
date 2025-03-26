@@ -1,5 +1,6 @@
 package uk.org.webcompere.spc.processor;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import uk.org.webcompere.spc.cli.SpcArgs;
@@ -10,6 +11,8 @@ import uk.org.webcompere.systemstubs.stream.SystemOut;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAndOutput;
@@ -34,7 +37,12 @@ class ProcessorTest {
 
     private SpcArgs emptyArgs = new SpcArgs();
 
-    private Processor processor = new Processor();
+    private Processor processor;
+
+    @BeforeEach
+    void beforeEach() {
+        processor = new Processor();
+    }
 
     @Test
     void whenProcessingNonExistentFileThenError() throws Exception {
@@ -56,6 +64,21 @@ class ProcessorTest {
 
         assertThat(systemOut.getLines()).contains("property1=boo");
         assertThat(systemOut.getLines()).doesNotContain("property1=foo");
+    }
+
+    @Test
+    void whenScanningExampleWithFixAndDryRunThenFixAppearsInAlternativeLogs() throws Exception {
+        List<String> logs = new ArrayList<>();
+        Processor otherProcessor = new Processor(logs::add, logs::add);
+
+        SpcArgs args = new SpcArgs();
+        args.setAction(SpcArgs.Action.fix);
+        args.setRead(EXAMPLE_WITH_DUPLICATE_PROPERTIES.getAbsolutePath());
+
+        assertThat(otherProcessor.execute(args)).isTrue();
+
+        assertThat(logs).contains("property1=boo");
+        assertThat(logs).doesNotContain("property1=foo");
     }
 
     @Test
@@ -96,6 +119,17 @@ class ProcessorTest {
 
         assertThat(systemOut.getLines())
                 .contains("example-with-duplicate-identical.properties: property1 has duplicate value 'foo' on L2,L7");
+    }
+
+    @Test
+    void whenProcessingFileWithIdenticalDuplicatesThenIsErrorWhenAllDuplicatesConfiguredAsError() throws Exception {
+        emptyArgs.setIdenticalDuplicatesAreErrors(true);
+
+        assertThat(processor.process(EXAMPLE_WITH_DUPLICATE_IDENTICAL_PROPERTIES, emptyArgs))
+                .isFalse();
+
+        assertThat(systemErr.getLines())
+                .contains("example-with-duplicate-identical.properties: property1 has duplicate values L2:'foo',L7:'foo'");
     }
 
     @Test

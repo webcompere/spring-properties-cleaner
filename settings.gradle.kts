@@ -11,4 +11,4 @@ plugins {
 }
 
 rootProject.name = "spring-properties-cleaner"
-include("app")
+include("app", "spring-properties-cleaner-plugin")

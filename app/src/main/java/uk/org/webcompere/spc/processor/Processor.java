@@ -11,11 +11,23 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static uk.org.webcompere.spc.processor.Scanner.scanForIssues;
 
 public class Processor {
+
+    private Consumer<String> errorLog = System.err::println;
+    private Consumer<String> infoLog = System.out::println;
+
+    public Processor() {
+    }
+
+    public Processor(Consumer<String> errorLog, Consumer<String> infoLog) {
+        this.errorLog = errorLog;
+        this.infoLog = infoLog;
+    }
 
     /**
      * Process the request from the CLI
@@ -26,7 +38,7 @@ public class Processor {
         Path path = Path.of(request.getRead());
         File file = path.toFile();
         if (!file.exists()) {
-            System.err.println(request.getRead() + " does not exist");
+            errorLog.accept(request.getRead() + " does not exist");
             return false;
         }
 
@@ -39,14 +51,14 @@ public class Processor {
     boolean process(File file, SpcArgs request) throws IOException {
         var propertiesFile = load(file);
 
-        var scanResult = scanForIssues(propertiesFile);;
+        var scanResult = scanForIssues(propertiesFile, request.isIdenticalDuplicatesAreErrors());;
 
-        scanResult.getErrors().forEach(System.err::println);
-        scanResult.getWarnings().forEach(System.out::println);
+        scanResult.getErrors().forEach(errorLog);
+        scanResult.getWarnings().forEach(infoLog);
 
         if (request.getAction() == SpcArgs.Action.fix) {
             if (request.isYml() && scanResult.isTelescopingProperties()) {
-                System.err.println("Cannot convert to YML owing to telescoping properties");
+                errorLog.accept("Cannot convert to YML owing to telescoping properties");
                 return false;
             }
 
@@ -71,18 +83,18 @@ public class Processor {
         for (File file: toProcess) {
             var propertiesFile = load(file);
             loaded.add(propertiesFile);
-            var result = scanForIssues(propertiesFile);
+            var result = scanForIssues(propertiesFile, request.isIdenticalDuplicatesAreErrors());
             results.add(result);
             errors.addAll(result.getErrors());
             warnings.addAll(result.getWarnings());
         }
 
-        errors.forEach(System.err::println);
-        warnings.forEach(System.out::println);
+        errors.forEach(errorLog);
+        warnings.forEach(infoLog);
 
         if (request.getAction() == SpcArgs.Action.fix) {
             if (request.isYml() && results.stream().anyMatch(ScanResult::isTelescopingProperties)) {
-                System.err.println("Cannot convert to YML owing to telescoping properties");
+                errorLog.accept("Cannot convert to YML owing to telescoping properties");
                 return false;
             }
             return Fixer.fix(loaded, request, writer(request));
@@ -105,10 +117,10 @@ public class Processor {
      * @param request the request from the command line
      * @return either a real writer or a console writer
      */
-    public static Writer writer(SpcArgs request) {
+    public Writer writer(SpcArgs request) {
         if (request.isApply()) {
             return new FileWriter();
         }
-        return new ConsoleWriter();
+        return new ConsoleWriter(infoLog);
     }
 }
