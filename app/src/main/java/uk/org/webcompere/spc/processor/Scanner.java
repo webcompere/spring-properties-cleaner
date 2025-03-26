@@ -13,15 +13,16 @@ public class Scanner {
     /**
      * Scan a properties file for dangerous or harmless duplicates and properties that telescope into each other
      * @param propertiesFile file
+     * @param allDuplicatesAreErrors whether to treat any duplicate as an error, rather than just differently values ones
      * @return the results of the scan
      */
-    public static ScanResult scanForIssues(PropertiesFile propertiesFile) {
+    public static ScanResult scanForIssues(PropertiesFile propertiesFile, boolean allDuplicatesAreErrors) {
         ScanResult scanResult = new ScanResult();
 
         var errorPrefix = propertiesFile.getName() + ": ";
 
         reportErrors(propertiesFile, scanResult, errorPrefix);
-        reportDuplicates(propertiesFile, scanResult, errorPrefix);
+        reportDuplicates(propertiesFile, scanResult, errorPrefix, allDuplicatesAreErrors);
         reportTelescopingProperties(propertiesFile, scanResult, errorPrefix);
 
         return scanResult;
@@ -32,12 +33,13 @@ public class Scanner {
                 scanResult.addError(errorPrefix + "non property '" + error.getContent() + "' on L" + error.getLine()));
     }
 
-    private static void reportDuplicates(PropertiesFile propertiesFile, ScanResult scanResult, String errorPrefix) {
+    private static void reportDuplicates(PropertiesFile propertiesFile, ScanResult scanResult,
+                                         String errorPrefix, boolean allDuplicatesAreErrors) {
         var duplicates = propertiesFile.getDuplicates();
 
         duplicates.forEach((key, value) -> {
             scanResult.getDuplicateKeys().add(key);
-            if (allTheSame(value.stream().map(Setting::getValue))) {
+            if (!allDuplicatesAreErrors && allTheSame(value.stream().map(Setting::getValue))) {
                 scanResult.addWarning(errorPrefix + key + " has duplicate value '" +
                         value.get(0).getValue() + "' on " +
                         value.stream().map(val -> "L" + val.getLine())

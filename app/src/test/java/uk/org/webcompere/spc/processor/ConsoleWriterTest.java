@@ -20,10 +20,9 @@ class ConsoleWriterTest {
     @SystemStub
     private SystemOut systemOut;
 
-    private ConsoleWriter consoleWriter = new ConsoleWriter();
-
     @Test
     void willWritePropertiesFileToConsole() throws Exception {
+        var consoleWriter = new ConsoleWriter();
         PropertiesFile file = new PropertiesFile(new File("/src/application.props"));
         file.add(new Setting(1, List.of(), "foo", "bar"));
 
