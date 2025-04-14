@@ -1,118 +1,69 @@
-# spring-properties-cleaner
+# Spring Properties Cleaner 
+
+![Maven](https://img.shields.io/badge/apachemaven-C71A36.svg?logo=apachemaven&logoColor=white)
+![JavaFX](https://img.shields.io/badge/java-11-white.svg?logo=javafx&logoColor=white)
+[![Build](https://github.com/webcompere/spring-properties-cleaner/actions/workflows/build-actions.yml/badge.svg?branch=main)](https://github.com/webcompere/spring-properties-cleaner/actions/workflows/build-actions.yml)
+[![codecov](https://codecov.io/gh/webcompere/spring-properties-cleaner/graph/badge.svg?token=OlKMD7tq48)](https://codecov.io/gh/webcompere/spring-properties-cleaner)
+
+> Note: this is WIP and the maven plugin is untested
+
+## Overview
+
 Utility to clean up spring properties files.
 
-> Note: this is WIP
+This is available as:
 
-## Execute
+- [Maven Plugin](./spring-properties-cleaner-plugin/README.md)
+- [Command Line Utility](./app/README.md)
 
-After building the application we can run it to get help:
+## Use Case
 
-```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar --help
-```
+As `application-<profile>.properties` files grow, with multiple Spring Profiles, a few anti-patterns may occur:
 
-### Scanning
+- Duplicate properties within the same file
+- Duplicate properties across the profiles, which could have been in a root `application.properties`
+- The order of the properties becomes random
+- We may wish to switch to the more readable `.yml` format
 
-And we can run it to scan a properties file:
+This toolset attempts to address these challenges. It can be used in a couple of modes:
 
-```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
-   --read path/to/resources/myproperties.properties
-```
+- Use the CLI to do some tidying
+- Use the maven plugin to ensure things don't get worse
+  - or  just use the maven plugin to tidy things up
 
-or a directory of them:
+### Improvement Order and Principles
 
-```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
-   --read path/to/resources
-```
+When using a tool like this to clean things up, it's probably useful to work
+in small increments which are easy to code review.
 
-A scan will exit with code 1 if the file contains duplicates with different values. The scan
-will also warn of telescoping values which would prevent a conversion to YML.
+As such, the tool will respect comment lines, assuming that comments are stuck
+to the property declaration which follows them.
 
-### Fixing/Rewriting
+Similarly, most modes of fixing files will only change what's necessary, leaving
+easy to review diffs. This includes sorting the file using `clustering`, where
+only properties with common prefixes, that are split across the file, are moved.
 
-We can fix things:
+It may be desirable to refactor the properties all the way to YML, but to
+make it easier to review each step, here's a recommended fix order:
 
-```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
-   --action fix \
-   --read path/to/resources
-```
+- Eliminate duplicates
+- Apply `clustered` sort (optional, but useful)
+- Extract a common properties file using `full` mode to get properties that are duplicated the same everywhere
+- Extract common properties using `consistent` mode to bring in more properties - checking that you're happy to have all of these in the common properties file
+- Extract common properties using `multiple` to bring in any common properties that appear often, though not always - again checking the impact
+- Apply a `sorted` sort to put everything in lexical (with numeric awareness) order (optional)
 
-Fixing will:
-
-- Coalesce duplicates into a single entry - the last value provided
-  - adding together all commented lines directly before each duplicate
-- Remove spaces between properties and comments
-- Take all non-comment and non-property lines and add them as comments at the end of the file
-- Apply the chosen sort to the property lines
-
-This will output new files to the console unless we add `--apply`
-
-```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
-    --action fix \
-    --apply \
-    --read path/to/resources
-```
-
-For sorting we can choose the sort mode of `sorted`, `clustered` or `none`. In `sorted`, the properties
-are sorted lexically (respecting the value of numbers). In `clustered`, the original order of the file is preserved
-as much as possible while also bringing up values with matching paths to be together. `none` - the default - does
-nothing.
-
-```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
-    --action fix \
-    --sort clustered \
-    --read path/to/resources
-```
-
-### Extracting Common Properties
-
-If we have multiple environments then we may have properties files:
-
-- `application.properties`
-- `application-dev.properties`
-- `application-prod.properties`
-
-For this we can use `--common` to find values that are the same and bring them into the root properties file. There are
-multiple modes:
-
-- `none` - don't do it
-- `full` - find identical values present in all files and bring them into the root properties file
-- `consistent` - find values which are in more than one place and always the same wherever they appear
-- `multiple` - find values that are in more than one place and bring them into the root properties, even if they're different in some places
-
-```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
-    --action fix \
-    --common full \
-    --read path/to/resources
-```
-
-### YML Output
-
-We can also provide `--yml` to get the _fixed_ files to be written in YML format. This will use the
-provided sort mode, defaulting to `clustered` if a sort is not provided.
-
-> NOTE: YML Cannot be generated if properties are telescoping. E.g. `server` and `server.port` cannot both
-> be in the same YAML. This will be warned on a scan.
-
-## Build
-
-```bash
-# build it
-./gradlew build
-
-# produce shadow jar
-./gradlew shadowJar
-```
+The scanning tool cannot scan `.yml` files, so converting everything to new `.yml` files
+is a final option you might take using the CLI. If you wish to keep
+running everything in properties files, then the maven plugin can enforce
+the settings you've used to fix the file when scanning, and can apply fresh
+fixes at your scan level if something has gone wrong in the current version.
 
 ## TODO
 
-- Create mvn plugin for both scanning and fixing
+- Test maven plugins in detail
+  - refactor the scanning and fixing code to share more
+  - make it so that the fixing settings all apply at scan time as things that can fail the scan
 - In YAML mode allow for a minimum length of property to be tree-ified if solo
 - In YAML handle telescoping properties like this:
   ```yml

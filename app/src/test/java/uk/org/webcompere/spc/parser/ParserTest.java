@@ -104,14 +104,4 @@ class ParserTest {
         assertThat(file.getSettings().get(0).getPrecedingComments()).containsExactly("# The Spearsmo");
         assertThat(file.getSettings().get(1).getPrecedingComments()).containsExactly("# The Aguilerio");
     }
-
-    @Test
-    void whenWhitespaceInCommentsOnlyCommentLinesIncluded() {
-        parser.parse("    ");
-        parser.parse("# The Spearsmo");
-        parser.parse("    ");
-        parser.parse("britney=spears");
-
-        assertThat(file.getSettings().get(0).getPrecedingComments()).containsExactly("# The Spearsmo");
-    }
 }

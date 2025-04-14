@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static uk.org.webcompere.spc.parser.Lines.noBlankLines;
-
 /**
  * Parses a properties file line by line
  */
@@ -40,7 +38,7 @@ public class Parser {
             if (!matcher.matches()) {
                 target.addError(lineNumber, line);
             } else {
-                target.add(new Setting(lineNumber, noBlankLines(pendingComments), matcher.group(1), matcher.group(2)));
+                target.add(new Setting(lineNumber, pendingComments, matcher.group(1), matcher.group(2)));
                 pendingComments = new ArrayList<>();
             }
         }
