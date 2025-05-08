@@ -1,7 +1,8 @@
 package uk.org.webcompere.spc.model;
 
-import com.beust.ah.A;
-import lombok.Getter;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,10 +15,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import lombok.Getter;
 
 /**
  * Model of a file
@@ -72,13 +70,12 @@ public class PropertiesFile {
      * @return the duplicates by key
      */
     public Map<String, List<Setting>> getDuplicates() {
-        return settings.stream().collect(groupingBy(Setting::getFullPath, LinkedHashMap::new, toList()))
+        return settings.stream()
+                .collect(groupingBy(Setting::getFullPath, LinkedHashMap::new, toList()))
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().size() > 1)
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (a, b) -> a,
-                        LinkedHashMap::new));
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
     }
 
     /**
@@ -86,11 +83,13 @@ public class PropertiesFile {
      * @return the file as series of lines - settings with preceding comments and then some trailing comments
      */
     public List<String> toLines() {
-        return Stream.concat(settings.stream()
-                        .flatMap(setting ->
-                                Stream.concat(setting.getPrecedingComments().stream(),
+        return Stream.concat(
+                        settings.stream()
+                                .flatMap(setting -> Stream.concat(
+                                        setting.getPrecedingComments().stream(),
                                         Stream.of(setting.getFullPath() + "=" + setting.getValue()))),
-                trailingComments.stream()).collect(toList());
+                        trailingComments.stream())
+                .collect(toList());
     }
 
     /**
@@ -138,7 +137,6 @@ public class PropertiesFile {
         settings.sort(Comparator.comparing(Setting::getFullPath, sort));
     }
 
-
     /**
      * Allow the settings to be rewritten
      * @param rewriter function to process settings
@@ -174,7 +172,8 @@ public class PropertiesFile {
      * @param expectedValue the expectedValue to remove, otherwise leave it alone
      */
     public void removeIf(String path, String expectedValue) {
-        remove(setting -> setting.getFullPath().equals(path) && setting.getValue().equals(expectedValue));
+        remove(setting ->
+                setting.getFullPath().equals(path) && setting.getValue().equals(expectedValue));
     }
 
     private void remove(Predicate<Setting> predicate) {

@@ -1,16 +1,15 @@
 package uk.org.webcompere.spc.processor;
 
-import se.sawano.java.text.AlphanumericComparator;
-import uk.org.webcompere.spc.cli.SpcArgs;
-import uk.org.webcompere.spc.model.PropertiesFile;
-import uk.org.webcompere.spc.model.Setting;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import se.sawano.java.text.AlphanumericComparator;
+import uk.org.webcompere.spc.cli.SpcArgs;
+import uk.org.webcompere.spc.model.PropertiesFile;
+import uk.org.webcompere.spc.model.Setting;
 
 public class Sorting {
 
@@ -32,7 +31,8 @@ public class Sorting {
     }
 
     private static List<Setting> clusterSettings(List<Setting> settings) {
-        int maxPath = settings.stream().mapToInt(setting -> setting.getFullPathParts().length)
+        int maxPath = settings.stream()
+                .mapToInt(setting -> setting.getFullPathParts().length)
                 .max()
                 .orElse(0);
 

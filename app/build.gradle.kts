@@ -19,12 +19,20 @@ plugins {
     // fine, let's lombok this stupid set of POJOs
     id("io.freefair.lombok") version "8.13"
 
+    id("com.diffplug.spotless") version "7.0.3"
+
     `maven-publish`
 }
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+}
+
+spotless {
+    java {
+        palantirJavaFormat()
+    }
 }
 
 dependencies {

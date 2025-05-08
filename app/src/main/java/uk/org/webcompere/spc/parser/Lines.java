@@ -1,12 +1,11 @@
 package uk.org.webcompere.spc.parser;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 public class Lines {
     /**
@@ -33,7 +32,6 @@ public class Lines {
      * @param <T> the type of the items
      */
     public static <T> Stream<Pair<T>> streamPairs(List<T> list) {
-        return IntStream.range(0, list.size() - 1)
-                .mapToObj(i -> new Pair<>(list.get(i), list.get(i+1)));
+        return IntStream.range(0, list.size() - 1).mapToObj(i -> new Pair<>(list.get(i), list.get(i + 1)));
     }
 }

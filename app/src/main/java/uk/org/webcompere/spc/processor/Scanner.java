@@ -1,13 +1,12 @@
 package uk.org.webcompere.spc.processor;
 
-import uk.org.webcompere.spc.model.PropertiesFile;
-import uk.org.webcompere.spc.model.Setting;
+import static uk.org.webcompere.spc.parser.Lines.allTheSame;
+import static uk.org.webcompere.spc.parser.Lines.streamPairs;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static uk.org.webcompere.spc.parser.Lines.allTheSame;
-import static uk.org.webcompere.spc.parser.Lines.streamPairs;
+import uk.org.webcompere.spc.model.PropertiesFile;
+import uk.org.webcompere.spc.model.Setting;
 
 public class Scanner {
     /**
@@ -29,34 +28,35 @@ public class Scanner {
     }
 
     private static void reportErrors(PropertiesFile propertiesFile, ScanResult scanResult, String errorPrefix) {
-        propertiesFile.getLineErrors().forEach(error ->
-                scanResult.addError(errorPrefix + "non property '" + error.getContent() + "' on L" + error.getLine()));
+        propertiesFile
+                .getLineErrors()
+                .forEach(error -> scanResult.addError(
+                        errorPrefix + "non property '" + error.getContent() + "' on L" + error.getLine()));
     }
 
-    private static void reportDuplicates(PropertiesFile propertiesFile, ScanResult scanResult,
-                                         String errorPrefix, boolean allDuplicatesAreErrors) {
+    private static void reportDuplicates(
+            PropertiesFile propertiesFile, ScanResult scanResult, String errorPrefix, boolean allDuplicatesAreErrors) {
         var duplicates = propertiesFile.getDuplicates();
 
         duplicates.forEach((key, value) -> {
             scanResult.getDuplicateKeys().add(key);
             if (!allDuplicatesAreErrors && allTheSame(value.stream().map(Setting::getValue))) {
-                scanResult.addWarning(errorPrefix + key + " has duplicate value '" +
-                        value.get(0).getValue() + "' on " +
-                        value.stream().map(val -> "L" + val.getLine())
-                                .collect(Collectors.joining(",")));
+                scanResult.addWarning(errorPrefix + key + " has duplicate value '"
+                        + value.get(0).getValue()
+                        + "' on "
+                        + value.stream().map(val -> "L" + val.getLine()).collect(Collectors.joining(",")));
             } else {
-                scanResult.addError(errorPrefix + key + " has duplicate values " +
-                        value.stream().map(val -> "L" + val.getLine() + ":'" + val.getValue() + "'")
+                scanResult.addError(errorPrefix + key + " has duplicate values "
+                        + value.stream()
+                                .map(val -> "L" + val.getLine() + ":'" + val.getValue() + "'")
                                 .collect(Collectors.joining(",")));
             }
         });
     }
 
-    private static void reportTelescopingProperties(PropertiesFile propertiesFile,
-                                                    ScanResult scanResult,
-                                                    String errorPrefix) {
-        List<String> keys = propertiesFile.getSettings()
-                .stream()
+    private static void reportTelescopingProperties(
+            PropertiesFile propertiesFile, ScanResult scanResult, String errorPrefix) {
+        List<String> keys = propertiesFile.getSettings().stream()
                 .map(Setting::getFullPath)
                 .distinct()
                 .sorted()
@@ -65,9 +65,9 @@ public class Scanner {
         streamPairs(keys).forEach(pair -> {
             if (pair.getSecond().startsWith(pair.getFirst())) {
                 scanResult.setTelescopingProperties(true);
-                scanResult.addWarning(errorPrefix + "property '" + pair.getFirst() + "' telescopes into '" + pair.getSecond() + "'");
+                scanResult.addWarning(
+                        errorPrefix + "property '" + pair.getFirst() + "' telescopes into '" + pair.getSecond() + "'");
             }
         });
-
     }
 }

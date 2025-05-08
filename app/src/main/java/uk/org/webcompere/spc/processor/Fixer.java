@@ -1,11 +1,10 @@
 package uk.org.webcompere.spc.processor;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.LineError;
 import uk.org.webcompere.spc.model.PropertiesFile;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class Fixer {
 
@@ -16,9 +15,7 @@ public class Fixer {
      * @param writer the target writer
      * @return true unless it went wrong
      */
-    public static boolean fix(List<PropertiesFile> propertiesFiles,
-                              SpcArgs config,
-                              Writer writer) {
+    public static boolean fix(List<PropertiesFile> propertiesFiles, SpcArgs config, Writer writer) {
         try {
             for (int i = 0; i < propertiesFiles.size(); i++) {
                 fix(propertiesFiles.get(i), config);
@@ -39,9 +36,7 @@ public class Fixer {
      * @param config configuration
      */
     static void fix(PropertiesFile file, SpcArgs config) {
-        file.getDuplicates()
-                .keySet()
-                .forEach(file::collapseIntoLast);
+        file.getDuplicates().keySet().forEach(file::collapseIntoLast);
 
         List<LineError> errors = file.extractErrors();
         file.addTrailingComments(errors.stream()
@@ -50,5 +45,4 @@ public class Fixer {
 
         Sorting.applySort(file, config.getSort());
     }
-
 }

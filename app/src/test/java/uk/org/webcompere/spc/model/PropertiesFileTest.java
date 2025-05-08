@@ -1,12 +1,11 @@
 package uk.org.webcompere.spc.model;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class PropertiesFileTest {
     private PropertiesFile file = new PropertiesFile(new File("properties"));

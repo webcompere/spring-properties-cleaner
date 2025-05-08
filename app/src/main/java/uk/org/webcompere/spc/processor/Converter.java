@@ -1,18 +1,17 @@
 package uk.org.webcompere.spc.processor;
 
-import uk.org.webcompere.spc.cli.SpcArgs;
-import uk.org.webcompere.spc.model.PropertiesFile;
-import uk.org.webcompere.spc.model.Setting;
-import uk.org.webcompere.spc.parser.Lines;
+import static java.util.stream.Collectors.toList;
+import static uk.org.webcompere.spc.parser.Lines.streamPairs;
 
 import java.io.File;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
-import static uk.org.webcompere.spc.parser.Lines.streamPairs;
+import uk.org.webcompere.spc.cli.SpcArgs;
+import uk.org.webcompere.spc.model.PropertiesFile;
+import uk.org.webcompere.spc.model.Setting;
+import uk.org.webcompere.spc.parser.Lines;
 
 public class Converter {
     /**
@@ -43,8 +42,7 @@ public class Converter {
 
         // this is an algorithm that wouldn't _like_ "application.properties.properties" but
         // why have you got that as a filename?
-        return new File(source.getParent(), source.getName()
-                .toLowerCase().replaceAll(".properties", ".yml"));
+        return new File(source.getParent(), source.getName().toLowerCase().replaceAll(".properties", ".yml"));
     }
 
     private static Stream<String> toYmlStream(PropertiesFile file, SpcArgs.SortMode sortMode) {
@@ -67,8 +65,7 @@ public class Converter {
     }
 
     private static Stream<String> toYmlStream(Stream<Setting> settingsWithHeader) {
-        return streamPairs(settingsWithHeader.collect(toList()))
-                .flatMap(Converter::nextBlock);
+        return streamPairs(settingsWithHeader.collect(toList())).flatMap(Converter::nextBlock);
     }
 
     private static Stream<String> nextBlock(Lines.Pair<Setting> previousAndNext) {
@@ -83,16 +80,15 @@ public class Converter {
         String thisLineIndent = "  ".repeat(thisLineLast);
 
         return Stream.of(
-                // the lines of YML path leading up to this setting
-                IntStream.range(commonRoot, thisLineLast)
-                    .mapToObj(i -> "  ".repeat(i) + thisLine[i] + ":"),
+                        // the lines of YML path leading up to this setting
+                        IntStream.range(commonRoot, thisLineLast).mapToObj(i -> "  ".repeat(i) + thisLine[i] + ":"),
 
-                // the comments at this indent before the value
-                toRender.getPrecedingComments().stream()
-                        .map(comment -> thisLineIndent + comment),
+                        // the comments at this indent before the value
+                        toRender.getPrecedingComments().stream().map(comment -> thisLineIndent + comment),
 
-                // the actual field at this point
-                Stream.of(thisLineIndent + thisLine[thisLineLast] + ": " + previousAndNext.getSecond().getValue()))
+                        // the actual field at this point
+                        Stream.of(thisLineIndent + thisLine[thisLineLast] + ": "
+                                + previousAndNext.getSecond().getValue()))
 
                 // converted into a single stream of lines
                 .flatMap(Function.identity());
@@ -100,10 +96,9 @@ public class Converter {
 
     private static int getCommonRoot(String[] previousLine, String[] thisLine) {
         int commonRoot = 0;
-        while (commonRoot < previousLine.length &&
-                commonRoot < thisLine.length &&
-                previousLine[commonRoot].equals(thisLine[commonRoot])
-        ) {
+        while (commonRoot < previousLine.length
+                && commonRoot < thisLine.length
+                && previousLine[commonRoot].equals(thisLine[commonRoot])) {
             commonRoot++;
         }
         return commonRoot;

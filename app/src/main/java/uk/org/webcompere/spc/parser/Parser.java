@@ -1,12 +1,11 @@
 package uk.org.webcompere.spc.parser;
 
-import uk.org.webcompere.spc.model.PropertiesFile;
-import uk.org.webcompere.spc.model.Setting;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import uk.org.webcompere.spc.model.PropertiesFile;
+import uk.org.webcompere.spc.model.Setting;
 
 /**
  * Parses a properties file line by line

@@ -1,5 +1,10 @@
 package uk.org.webcompere.spc.plugin;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAndOutput;
+
+import java.nio.file.Paths;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -10,12 +15,6 @@ import uk.org.webcompere.systemstubs.jupiter.SystemStub;
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
 import uk.org.webcompere.systemstubs.stream.SystemErr;
 import uk.org.webcompere.systemstubs.stream.SystemOut;
-
-import java.nio.file.Paths;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAndOutput;
 
 @ExtendWith(SystemStubsExtension.class)
 class SpringPropertiesCleanerScanMojoTest {
@@ -31,8 +30,7 @@ class SpringPropertiesCleanerScanMojoTest {
         MavenProject mavenProject = new MavenProject();
         SpringPropertiesCleanerScanMojo mojo = new SpringPropertiesCleanerScanMojo(mavenProject);
 
-        assertThatThrownBy(mojo::execute)
-                .isInstanceOf(MojoExecutionException.class);
+        assertThatThrownBy(mojo::execute).isInstanceOf(MojoExecutionException.class);
     }
 
     @Test
@@ -44,11 +42,11 @@ class SpringPropertiesCleanerScanMojoTest {
         SpringPropertiesCleanerScanMojo mojo = new SpringPropertiesCleanerScanMojo(mavenProject);
         mojo.prefix = "example";
 
-        assertThatThrownBy(mojo::execute)
-                .isInstanceOf(MojoFailureException.class);
+        assertThatThrownBy(mojo::execute).isInstanceOf(MojoFailureException.class);
 
         assertThat(systemErr.getLines())
-                .contains("[error] example-with-duplicate.properties: property1 has duplicate values L2:'foo',L7:'boo'");
+                .contains(
+                        "[error] example-with-duplicate.properties: property1 has duplicate values L2:'foo',L7:'boo'");
     }
 
     @Test
@@ -58,10 +56,10 @@ class SpringPropertiesCleanerScanMojoTest {
         mojo.read = Paths.get("src", "test", "resources").toString();
         mojo.prefix = "example";
 
-        assertThatThrownBy(mojo::execute)
-                .isInstanceOf(MojoFailureException.class);
+        assertThatThrownBy(mojo::execute).isInstanceOf(MojoFailureException.class);
 
         assertThat(systemErr.getLines())
-                .contains("[error] example-with-duplicate.properties: property1 has duplicate values L2:'foo',L7:'boo'");
+                .contains(
+                        "[error] example-with-duplicate.properties: property1 has duplicate values L2:'foo',L7:'boo'");
     }
 }

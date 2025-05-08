@@ -1,15 +1,14 @@
 package uk.org.webcompere.spc.processor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.File;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
-
-import java.io.File;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class FileWriterTest {
 
@@ -27,5 +26,4 @@ class FileWriterTest {
 
         assertThat(file.getSource()).hasContent("foo=bar");
     }
-
 }

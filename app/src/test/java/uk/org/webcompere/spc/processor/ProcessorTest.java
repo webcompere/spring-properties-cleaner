@@ -1,5 +1,12 @@
 package uk.org.webcompere.spc.processor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAndOutput;
+
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,25 +16,21 @@ import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
 import uk.org.webcompere.systemstubs.stream.SystemErr;
 import uk.org.webcompere.systemstubs.stream.SystemOut;
 
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAndOutput;
-
 @ExtendWith(SystemStubsExtension.class)
 class ProcessorTest {
-    private static final File EXAMPLE_WITH_DUPLICATE_PROPERTIES =
-            Paths.get("src", "test", "resources", "example-with-duplicate.properties").toFile();
-    private static final File EXAMPLE_WITH_DUPLICATE_IDENTICAL_PROPERTIES =
-            Paths.get("src", "test", "resources", "example-with-duplicate-identical.properties").toFile();
-    private static final File EXAMPLE_DIRECTORY = Paths.get("src", "test", "resources").toFile();
+    private static final File EXAMPLE_WITH_DUPLICATE_PROPERTIES = Paths.get(
+                    "src", "test", "resources", "example-with-duplicate.properties")
+            .toFile();
+    private static final File EXAMPLE_WITH_DUPLICATE_IDENTICAL_PROPERTIES = Paths.get(
+                    "src", "test", "resources", "example-with-duplicate-identical.properties")
+            .toFile();
+    private static final File EXAMPLE_DIRECTORY =
+            Paths.get("src", "test", "resources").toFile();
     private static final File EXAMPLE_BROKEN =
             Paths.get("src", "test", "resources", "broken", "broken.properties").toFile();
-    private static final File EXAMPLE_TELESCOPING_PROPERTIES =
-            Paths.get("src", "test", "resources", "broken", "telescoping.properties").toFile();
+    private static final File EXAMPLE_TELESCOPING_PROPERTIES = Paths.get(
+                    "src", "test", "resources", "broken", "telescoping.properties")
+            .toFile();
 
     @SystemStub
     private SystemErr systemErr = new SystemErr(tapAndOutput());
@@ -96,11 +99,9 @@ class ProcessorTest {
 
     @Test
     void whenProcessingBrokenFileWithDuplicatesThenError() throws Exception {
-        assertThat(processor.process(EXAMPLE_BROKEN, emptyArgs))
-                .isFalse();
+        assertThat(processor.process(EXAMPLE_BROKEN, emptyArgs)).isFalse();
 
-        assertThat(systemErr.getLines())
-                .contains("broken.properties: non property 'aaaargh' on L1");
+        assertThat(systemErr.getLines()).contains("broken.properties: non property 'aaaargh' on L1");
     }
 
     @Test
@@ -129,7 +130,8 @@ class ProcessorTest {
                 .isFalse();
 
         assertThat(systemErr.getLines())
-                .contains("example-with-duplicate-identical.properties: property1 has duplicate values L2:'foo',L7:'foo'");
+                .contains(
+                        "example-with-duplicate-identical.properties: property1 has duplicate values L2:'foo',L7:'foo'");
     }
 
     @Test
@@ -137,11 +139,9 @@ class ProcessorTest {
         SpcArgs args = new SpcArgs();
         args.setYml(true);
         args.setAction(SpcArgs.Action.fix);
-        assertThat(processor.process(EXAMPLE_TELESCOPING_PROPERTIES, args))
-                .isFalse();
+        assertThat(processor.process(EXAMPLE_TELESCOPING_PROPERTIES, args)).isFalse();
 
-        assertThat(systemErr.getLines())
-                .contains("Cannot convert to YML owing to telescoping properties");
+        assertThat(systemErr.getLines()).contains("Cannot convert to YML owing to telescoping properties");
     }
 
     @Test
@@ -153,7 +153,6 @@ class ProcessorTest {
         assertThat(processor.processDirectory(EXAMPLE_TELESCOPING_PROPERTIES.getParentFile(), args))
                 .isFalse();
 
-        assertThat(systemErr.getLines())
-                .contains("Cannot convert to YML owing to telescoping properties");
+        assertThat(systemErr.getLines()).contains("Cannot convert to YML owing to telescoping properties");
     }
 }

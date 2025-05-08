@@ -16,8 +16,8 @@ public class PropertiesFileFactory {
     public static PropertiesFile createFile(String name, Map<String, String> properties) {
         PropertiesFile propertiesFile = new PropertiesFile(new File(name));
         AtomicInteger lineNumber = new AtomicInteger(1);
-        properties.forEach((key, value) -> propertiesFile.add(
-                new Setting(lineNumber.getAndIncrement(), List.of(), key, value)));
+        properties.forEach(
+                (key, value) -> propertiesFile.add(new Setting(lineNumber.getAndIncrement(), List.of(), key, value)));
         return propertiesFile;
     }
 }

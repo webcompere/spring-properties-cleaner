@@ -1,5 +1,13 @@
 package uk.org.webcompere.spc.processor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.BDDMockito.then;
+
+import java.io.File;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -7,15 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
-
-import java.io.File;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class FixerTest {
@@ -50,12 +49,7 @@ class FixerTest {
         Fixer.fix(file, new SpcArgs());
 
         assertThat(file.getLineErrors()).isEmpty();
-        assertThat(file.getTrailingComments()).containsExactly(
-                "# foo",
-                "# bar",
-                "# 1: broken",
-                "# 2: also broken"
-        );
+        assertThat(file.getTrailingComments()).containsExactly("# foo", "# bar", "# 1: broken", "# 2: also broken");
     }
 
     @Test
@@ -95,11 +89,7 @@ class FixerTest {
         Fixer.fix(file, args);
 
         assertThat(file.getSettings().stream().map(Setting::getFullPath))
-                .containsExactly("anteater",
-                        "zebra1",
-                        "zebra9",
-                        "zebra52",
-                        "zebra100");
+                .containsExactly("anteater", "zebra1", "zebra9", "zebra52", "zebra100");
     }
 
     @Test
@@ -116,10 +106,7 @@ class FixerTest {
 
         assertThat(file.getSettings().stream().map(Setting::getFullPath))
                 .containsExactly(
-                        "otherPath.to.property",
-                        "otherPath.to.thefuture",
-                        "path.to.property1",
-                        "path.to.property9");
+                        "otherPath.to.property", "otherPath.to.thefuture", "path.to.property1", "path.to.property9");
     }
 
     @Test
@@ -135,10 +122,8 @@ class FixerTest {
         Fixer.fix(file, args);
 
         assertThat(file.getSettings().stream().map(Setting::getFullPath))
-                .containsExactly("path.to.property1",
-                        "path.to.property9",
-                        "otherPath.to.thefuture",
-                        "otherPath.to.property");
+                .containsExactly(
+                        "path.to.property1", "path.to.property9", "otherPath.to.thefuture", "otherPath.to.property");
     }
 
     @Test

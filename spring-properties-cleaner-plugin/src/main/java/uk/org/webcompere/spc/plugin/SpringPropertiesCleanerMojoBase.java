@@ -1,5 +1,8 @@
 package uk.org.webcompere.spc.plugin;
 
+import static java.util.function.Predicate.not;
+
+import java.util.Optional;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.AbstractMojoExecutionException;
@@ -9,10 +12,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.processor.Processor;
-
-import java.util.Optional;
-
-import static java.util.function.Predicate.not;
 
 public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
 
@@ -85,6 +84,6 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
             throw new RuntimeException("No resources directory found");
         }
 
-        return ((Resource)project.getResources().get(0)).getDirectory();
+        return ((Resource) project.getResources().get(0)).getDirectory();
     }
 }

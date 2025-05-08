@@ -1,8 +1,6 @@
 package uk.org.webcompere.spc.processor;
 
-import uk.org.webcompere.spc.cli.SpcArgs;
-import uk.org.webcompere.spc.model.PropertiesFile;
-import uk.org.webcompere.spc.parser.Parser;
+import static uk.org.webcompere.spc.processor.Scanner.scanForIssues;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,16 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static uk.org.webcompere.spc.processor.Scanner.scanForIssues;
+import uk.org.webcompere.spc.cli.SpcArgs;
+import uk.org.webcompere.spc.model.PropertiesFile;
+import uk.org.webcompere.spc.parser.Parser;
 
 public class Processor {
 
     private Consumer<String> errorLog = System.err::println;
     private Consumer<String> infoLog = System.out::println;
 
-    public Processor() {
-    }
+    public Processor() {}
 
     public Processor(Consumer<String> errorLog, Consumer<String> infoLog) {
         this.errorLog = errorLog;
@@ -51,7 +49,8 @@ public class Processor {
     boolean process(File file, SpcArgs request) throws IOException {
         var propertiesFile = load(file);
 
-        var scanResult = scanForIssues(propertiesFile, request.isIdenticalDuplicatesAreErrors());;
+        var scanResult = scanForIssues(propertiesFile, request.isIdenticalDuplicatesAreErrors());
+        ;
 
         scanResult.getErrors().forEach(errorLog);
         scanResult.getWarnings().forEach(infoLog);
@@ -80,7 +79,7 @@ public class Processor {
 
         List<PropertiesFile> loaded = new ArrayList<>();
         List<ScanResult> results = new ArrayList<>();
-        for (File file: toProcess) {
+        for (File file : toProcess) {
             var propertiesFile = load(file);
             loaded.add(propertiesFile);
             var result = scanForIssues(propertiesFile, request.isIdenticalDuplicatesAreErrors());

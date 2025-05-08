@@ -1,18 +1,17 @@
 package uk.org.webcompere.spc.processor;
 
-import uk.org.webcompere.spc.cli.SpcArgs;
-import uk.org.webcompere.spc.model.PropertiesFile;
-import uk.org.webcompere.spc.model.Setting;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static uk.org.webcompere.spc.parser.Lines.allTheSame;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static uk.org.webcompere.spc.parser.Lines.allTheSame;
+import uk.org.webcompere.spc.cli.SpcArgs;
+import uk.org.webcompere.spc.model.PropertiesFile;
+import uk.org.webcompere.spc.model.Setting;
 
 public class CommonSettings {
     /**
@@ -33,7 +32,8 @@ public class CommonSettings {
         PropertiesFile commonFile = propertiesFiles.stream()
                 .filter(file -> file.getName().equals(commonFileName))
                 .findFirst()
-                .orElseGet(() -> new PropertiesFile(new File(propertiesFiles.get(0).getSource().getParentFile(), commonFileName)));
+                .orElseGet(() -> new PropertiesFile(
+                        new File(propertiesFiles.get(0).getSource().getParentFile(), commonFileName)));
 
         // find the other files
         List<PropertiesFile> otherFiles = propertiesFiles.stream()
@@ -47,10 +47,16 @@ public class CommonSettings {
         return Stream.concat(Stream.of(commonFile), otherFiles.stream()).collect(toList());
     }
 
-    private static void combineProperties(PropertiesFile commonFile, List<PropertiesFile> otherFiles,
-                                          SpcArgs.CommonPropertiesMode mode, SpcArgs.SortMode sortMode) {
+    private static void combineProperties(
+            PropertiesFile commonFile,
+            List<PropertiesFile> otherFiles,
+            SpcArgs.CommonPropertiesMode mode,
+            SpcArgs.SortMode sortMode) {
         PropertiesFile superProperties = new PropertiesFile(new File("super"));
-        otherFiles.stream().map(PropertiesFile::getSettings).flatMap(List::stream).forEach(superProperties::add);
+        otherFiles.stream()
+                .map(PropertiesFile::getSettings)
+                .flatMap(List::stream)
+                .forEach(superProperties::add);
 
         var duplicates = superProperties.getDuplicates();
 
@@ -61,8 +67,12 @@ public class CommonSettings {
         Sorting.applySort(commonFile, sortMode);
     }
 
-    private static void combineProperties(PropertiesFile commonFile, List<PropertiesFile> otherFiles,
-                                          String key, List<Setting> sharedValues, SpcArgs.CommonPropertiesMode mode) {
+    private static void combineProperties(
+            PropertiesFile commonFile,
+            List<PropertiesFile> otherFiles,
+            String key,
+            List<Setting> sharedValues,
+            SpcArgs.CommonPropertiesMode mode) {
         if (commonFile.getLast(key).isPresent()) {
             return;
         }
@@ -90,19 +100,16 @@ public class CommonSettings {
         otherFiles.forEach(file -> file.remove(key));
     }
 
-    private static void applyDominant(PropertiesFile commonFile, List<PropertiesFile> otherFiles,
-                                      String key, List<Setting> sharedValues) {
-        Map<String, Long> countOfValues = sharedValues.stream()
-                .collect(groupingBy(Setting::getValue, counting()));
+    private static void applyDominant(
+            PropertiesFile commonFile, List<PropertiesFile> otherFiles, String key, List<Setting> sharedValues) {
+        Map<String, Long> countOfValues = sharedValues.stream().collect(groupingBy(Setting::getValue, counting()));
 
-        Long max = countOfValues.values().stream()
-                .mapToLong(val -> val)
-                .max()
-                .orElse(0);
+        Long max = countOfValues.values().stream().mapToLong(val -> val).max().orElse(0);
 
         List<String> valuesAtMax = countOfValues.entrySet().stream()
                 .filter(entry -> max.equals(entry.getValue()))
-                .map(Map.Entry::getKey).collect(toList());
+                .map(Map.Entry::getKey)
+                .collect(toList());
 
         // there is no winner
         if (valuesAtMax.size() != 1) {

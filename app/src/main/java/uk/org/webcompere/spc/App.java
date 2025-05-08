@@ -1,11 +1,11 @@
 package uk.org.webcompere.spc;
 
+import static java.lang.System.exit;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.processor.Processor;
-
-import static java.lang.System.exit;
 
 public class App {
 
@@ -15,9 +15,7 @@ public class App {
      */
     public static void main(String[] args) {
         SpcArgs arguments = new SpcArgs();
-        JCommander cliParser = JCommander.newBuilder()
-                .addObject(arguments)
-                .build();
+        JCommander cliParser = JCommander.newBuilder().addObject(arguments).build();
         try {
             cliParser.parse(args);
 

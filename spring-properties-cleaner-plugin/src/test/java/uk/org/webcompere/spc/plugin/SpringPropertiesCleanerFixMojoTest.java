@@ -1,5 +1,8 @@
 package uk.org.webcompere.spc.plugin;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAndOutput;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
@@ -8,9 +11,6 @@ import uk.org.webcompere.systemstubs.jupiter.SystemStub;
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
 import uk.org.webcompere.systemstubs.stream.SystemErr;
 import uk.org.webcompere.systemstubs.stream.SystemOut;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static uk.org.webcompere.systemstubs.stream.output.OutputFactories.tapAndOutput;
 
 @ExtendWith(SystemStubsExtension.class)
 class SpringPropertiesCleanerFixMojoTest {
@@ -26,7 +26,6 @@ class SpringPropertiesCleanerFixMojoTest {
         MavenProject mavenProject = new MavenProject();
         SpringPropertiesCleanerFixMojo mojo = new SpringPropertiesCleanerFixMojo(mavenProject);
 
-        assertThatThrownBy(mojo::execute)
-                .isInstanceOf(MojoExecutionException.class);
+        assertThatThrownBy(mojo::execute).isInstanceOf(MojoExecutionException.class);
     }
 }

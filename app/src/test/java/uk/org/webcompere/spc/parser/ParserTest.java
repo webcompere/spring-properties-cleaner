@@ -1,12 +1,11 @@
 package uk.org.webcompere.spc.parser;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.File;
 import org.junit.jupiter.api.Test;
 import uk.org.webcompere.spc.model.LineError;
 import uk.org.webcompere.spc.model.PropertiesFile;
-
-import java.io.File;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ParserTest {
     private PropertiesFile file = new PropertiesFile(new File("foo"));
@@ -34,8 +33,7 @@ class ParserTest {
         parser.parse("# this is another comment");
         parser.close();
 
-        assertThat(file.getTrailingComments())
-                .containsExactly("# this is a comment", "", "# this is another comment");
+        assertThat(file.getTrailingComments()).containsExactly("# this is a comment", "", "# this is another comment");
     }
 
     @Test
@@ -43,8 +41,7 @@ class ParserTest {
         parser.parse("     ");
         parser.close();
 
-        assertThat(file.getTrailingComments())
-                .containsExactly("     ");
+        assertThat(file.getTrailingComments()).containsExactly("     ");
     }
 
     @Test

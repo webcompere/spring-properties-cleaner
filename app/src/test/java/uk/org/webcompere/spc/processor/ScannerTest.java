@@ -1,12 +1,11 @@
 package uk.org.webcompere.spc.processor;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.org.webcompere.spc.model.PropertiesFileFactory.createFile;
 import static uk.org.webcompere.spc.processor.Scanner.scanForIssues;
+
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 class ScannerTest {
 

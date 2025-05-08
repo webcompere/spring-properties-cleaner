@@ -1,17 +1,16 @@
 package uk.org.webcompere.spc.processor;
 
-import org.junit.jupiter.api.Test;
-import uk.org.webcompere.spc.cli.SpcArgs;
-import uk.org.webcompere.spc.model.PropertiesFile;
-import uk.org.webcompere.spc.model.Setting;
+import static org.assertj.core.api.Assertions.assertThat;
+import static uk.org.webcompere.spc.model.PropertiesFileFactory.createFile;
 
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static uk.org.webcompere.spc.model.PropertiesFileFactory.createFile;
+import org.junit.jupiter.api.Test;
+import uk.org.webcompere.spc.cli.SpcArgs;
+import uk.org.webcompere.spc.model.PropertiesFile;
+import uk.org.webcompere.spc.model.Setting;
 
 class ConverterTest {
 
@@ -37,9 +36,8 @@ class ConverterTest {
     void propertiesFileIsOutputAsLinesWhenNotYml() {
         PropertiesFile file = createFile("testfile", Map.of("server.port", "8080", "server.name", "myserver"));
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.none, false)).containsExactlyInAnyOrder(
-                "server.port=8080",
-                "server.name=myserver");
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.none, false))
+                .containsExactlyInAnyOrder("server.port=8080", "server.name=myserver");
     }
 
     @Test
@@ -47,28 +45,37 @@ class ConverterTest {
         PropertiesFile file = createFile("testfile", Map.of("server.port", "8080", "server.name", "myserver"));
         file.sortSettings(Sorting.createSort());
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true)).containsExactly(
-                "server:",
-                "  name: myserver",
-                "  port: 8080");
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
+                .containsExactly("server:", "  name: myserver", "  port: 8080");
     }
 
     @Test
     void propertiesFileWithMultipleLevelsOfNestingIsOutputAsYml() {
-        PropertiesFile file = createFile("testfile", Map.of("server.port", "8080", "server.name",
-                "myserver", "zebra.stripe.fan", "true", "zebra.stripe.detector", "on",
-                "zebra.range", "close"));
+        PropertiesFile file = createFile(
+                "testfile",
+                Map.of(
+                        "server.port",
+                        "8080",
+                        "server.name",
+                        "myserver",
+                        "zebra.stripe.fan",
+                        "true",
+                        "zebra.stripe.detector",
+                        "on",
+                        "zebra.range",
+                        "close"));
         file.sortSettings(Sorting.createSort());
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true)).containsExactly(
-                "server:",
-                "  name: myserver",
-                "  port: 8080",
-                "zebra:",
-                "  range: close",
-                "  stripe:",
-                "    detector: on",
-                "    fan: true");
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
+                .containsExactly(
+                        "server:",
+                        "  name: myserver",
+                        "  port: 8080",
+                        "zebra:",
+                        "  range: close",
+                        "  stripe:",
+                        "    detector: on",
+                        "    fan: true");
     }
 
     @Test
@@ -78,12 +85,13 @@ class ConverterTest {
 
         file.sortSettings(Sorting.createSort());
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true)).containsExactly(
-                "server:",
-                "  # this is the address",
-                "  address: 127.0.0.1",
-                "  name: myserver",
-                "  port: 8080");
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
+                .containsExactly(
+                        "server:",
+                        "  # this is the address",
+                        "  address: 127.0.0.1",
+                        "  name: myserver",
+                        "  port: 8080");
     }
 
     @Test
@@ -97,12 +105,13 @@ class ConverterTest {
 
         Sorting.applySort(file, SpcArgs.SortMode.clustered);
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.clustered, true)).containsExactly(
-                "server:",
-                "  name: myserver",
-                "  port: 8080",
-                "  # this is the address",
-                "  address: 127.0.0.1");
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.clustered, true))
+                .containsExactly(
+                        "server:",
+                        "  name: myserver",
+                        "  port: 8080",
+                        "  # this is the address",
+                        "  address: 127.0.0.1");
     }
 
     @Test
@@ -111,12 +120,7 @@ class ConverterTest {
         file.addTrailingComments(List.of("# trailing one", "", "# trailing two"));
         file.sortSettings(Sorting.createSort());
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true)).containsExactly(
-                "server:",
-                "  name: myserver",
-                "  port: 8080",
-                "# trailing one",
-                "",
-                "# trailing two");
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
+                .containsExactly("server:", "  name: myserver", "  port: 8080", "# trailing one", "", "# trailing two");
     }
 }

@@ -11,8 +11,7 @@ public class ConsoleWriter implements Writer {
 
     private Consumer<String> console = System.out::println;
 
-    public ConsoleWriter() {
-    }
+    public ConsoleWriter() {}
 
     public ConsoleWriter(Consumer<String> console) {
         this.console = console;

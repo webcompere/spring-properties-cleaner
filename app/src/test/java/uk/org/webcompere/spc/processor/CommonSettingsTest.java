@@ -1,17 +1,16 @@
 package uk.org.webcompere.spc.processor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static uk.org.webcompere.spc.model.PropertiesFileFactory.createFile;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
-
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static uk.org.webcompere.spc.model.PropertiesFileFactory.createFile;
 
 class CommonSettingsTest {
 
@@ -136,7 +135,7 @@ class CommonSettingsTest {
         PropertiesFile prod = createFile("application-prod.properties", Map.of(commonProperty, "8080"));
         PropertiesFile staging = createFile("application-staging.properties", Map.of());
 
-        List<PropertiesFile> result = CommonSettings.process(List.of(dev, prod,staging ), multipleArgs);
+        List<PropertiesFile> result = CommonSettings.process(List.of(dev, prod, staging), multipleArgs);
         var commonResult = result.get(0);
 
         assertThat(commonResult.getLast(commonProperty)).hasValue("8080");
@@ -188,7 +187,6 @@ class CommonSettingsTest {
         List<PropertiesFile> result = CommonSettings.process(List.of(dev, prod, staging, perf), multipleArgs);
         var commonResult = result.get(0);
 
-
         assertThat(commonResult.getLast(commonProperty)).isEmpty();
     }
 
@@ -211,7 +209,8 @@ class CommonSettingsTest {
 
     @Test
     void whenSortingIsOnThenCommonPropertiesFileGetsSorted() {
-        var someProperties = Map.of("server.port", "8080", "local.host.name", "localhost", "local.application", "myApp");
+        var someProperties =
+                Map.of("server.port", "8080", "local.host.name", "localhost", "local.application", "myApp");
         PropertiesFile dev = createFile("application-dev.properties", someProperties);
         PropertiesFile staging = createFile("application-staging.properties", someProperties);
 
@@ -223,5 +222,4 @@ class CommonSettingsTest {
         assertThat(commonResult.getSettings().stream().map(Setting::getFullPath))
                 .containsExactly("local.application", "local.host.name", "server.port");
     }
-
 }

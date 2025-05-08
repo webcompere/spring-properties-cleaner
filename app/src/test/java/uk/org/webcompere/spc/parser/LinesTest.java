@@ -1,11 +1,10 @@
 package uk.org.webcompere.spc.parser;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.org.webcompere.spc.parser.Lines.streamPairs;
+
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class LinesTest {
 
@@ -41,9 +40,8 @@ class LinesTest {
     void multiPairListIsStreamedToEachPairing() {
         List<String> empty = List.of("foo", "bar", "baz", "boz");
 
-        assertThat(streamPairs(empty)).containsExactly(
-                new Lines.Pair<>("foo", "bar"),
-                new Lines.Pair<>("bar", "baz"),
-                new Lines.Pair<>("baz", "boz"));
+        assertThat(streamPairs(empty))
+                .containsExactly(
+                        new Lines.Pair<>("foo", "bar"), new Lines.Pair<>("bar", "baz"), new Lines.Pair<>("baz", "boz"));
     }
 }
