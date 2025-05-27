@@ -1,8 +1,7 @@
 package uk.org.webcompere.spc.plugin;
 
-import uk.org.webcompere.spc.processor.Processor;
-
 import java.util.function.Consumer;
+import uk.org.webcompere.spc.processor.Processor;
 
 @FunctionalInterface
 public interface ProcessorFactory {

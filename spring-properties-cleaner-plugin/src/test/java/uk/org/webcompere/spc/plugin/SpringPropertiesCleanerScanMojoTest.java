@@ -84,7 +84,8 @@ class SpringPropertiesCleanerScanMojoTest {
     void identicalDuplicatesAreErrorsTrueIsPassedOn() throws Exception {
         given(processor.execute(any())).willReturn(true);
 
-        SpringPropertiesCleanerScanMojo mojo = new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
+        SpringPropertiesCleanerScanMojo mojo =
+                new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
         mojo.identicalDuplicatesAreErrors = true;
         mojo.execute();
 
@@ -97,7 +98,8 @@ class SpringPropertiesCleanerScanMojoTest {
     void identicalDuplicatesAreErrorsFalseIsPassedOn() throws Exception {
         given(processor.execute(any())).willReturn(true);
 
-        SpringPropertiesCleanerScanMojo mojo = new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
+        SpringPropertiesCleanerScanMojo mojo =
+                new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
         mojo.identicalDuplicatesAreErrors = false;
         mojo.execute();
 
@@ -110,7 +112,8 @@ class SpringPropertiesCleanerScanMojoTest {
     void sortModeIsPassedOn() throws Exception {
         given(processor.execute(any())).willReturn(true);
 
-        SpringPropertiesCleanerScanMojo mojo = new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
+        SpringPropertiesCleanerScanMojo mojo =
+                new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
         mojo.sort = SpcArgs.SortMode.clustered;
         mojo.execute();
 
@@ -123,7 +126,8 @@ class SpringPropertiesCleanerScanMojoTest {
     void commonPropertiesModeIsPassedOn() throws Exception {
         given(processor.execute(any())).willReturn(true);
 
-        SpringPropertiesCleanerScanMojo mojo = new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
+        SpringPropertiesCleanerScanMojo mojo =
+                new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
         mojo.common = SpcArgs.CommonPropertiesMode.multiple;
         mojo.execute();
 
@@ -136,7 +140,8 @@ class SpringPropertiesCleanerScanMojoTest {
     void applyIsFalse() throws Exception {
         given(processor.execute(any())).willReturn(true);
 
-        SpringPropertiesCleanerScanMojo mojo = new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
+        SpringPropertiesCleanerScanMojo mojo =
+                new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
         mojo.execute();
 
         then(processor).should().execute(captor.capture());
