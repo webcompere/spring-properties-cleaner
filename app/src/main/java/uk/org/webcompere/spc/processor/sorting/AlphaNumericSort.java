@@ -1,6 +1,5 @@
 package uk.org.webcompere.spc.processor.sorting;
 
-import java.util.Comparator;
 import lombok.Getter;
 
 /**
@@ -8,10 +7,6 @@ import lombok.Getter;
  * numbers are treated as "later" than strings.
  */
 public class AlphaNumericSort {
-
-    public static Comparator<CharSequence> createSort() {
-        return AlphaNumericSort::alphaSort;
-    }
 
     @Getter
     private static class Chunker {
@@ -83,7 +78,13 @@ public class AlphaNumericSort {
         }
     }
 
-    private static int alphaSort(CharSequence s1, CharSequence s2) {
+    /**
+     * Comparator function
+     * @param s1 first string to compare
+     * @param s2 second string to compare
+     * @return the comparison of two strings - this will go in blocks which are of type string or number
+     */
+    public static int alphaNumericSort(CharSequence s1, CharSequence s2) {
         Chunker chunker1 = new Chunker(s1);
         Chunker chunker2 = new Chunker(s2);
 
@@ -94,10 +95,7 @@ public class AlphaNumericSort {
 
             if (chunker1.isNumber()) {
                 if (!chunker1.getNumber().equals(chunker2.getNumber())) {
-                    int comparison = Double.compare(chunker1.getNumber(), chunker2.getNumber());
-                    if (comparison != 0) {
-                        return comparison;
-                    }
+                    return Double.compare(chunker1.getNumber(), chunker2.getNumber());
                 }
             } else {
                 int comparison = CharSequence.compare(chunker1.getString(), chunker2.getString());

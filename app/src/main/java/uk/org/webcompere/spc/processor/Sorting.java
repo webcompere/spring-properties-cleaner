@@ -1,7 +1,5 @@
 package uk.org.webcompere.spc.processor;
 
-import static uk.org.webcompere.spc.processor.sorting.AlphaNumericSort.createSort;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +7,7 @@ import java.util.stream.Collectors;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
+import uk.org.webcompere.spc.processor.sorting.AlphaNumericSort;
 
 public class Sorting {
 
@@ -20,7 +19,7 @@ public class Sorting {
     public static void applySort(PropertiesFile file, SpcArgs.SortMode sort) {
         switch (sort) {
             case sorted:
-                file.sortSettings(createSort());
+                file.sortSettings(AlphaNumericSort::alphaNumericSort);
                 break;
 
             case clustered:
