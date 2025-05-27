@@ -1,5 +1,7 @@
 package uk.org.webcompere.spc.processor;
 
+import static uk.org.webcompere.spc.processor.sorting.AlphaNumericSort.createSort;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,8 +9,6 @@ import java.util.stream.Collectors;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
-
-import static uk.org.webcompere.spc.processor.sorting.AlphaNumericSort.createSort;
 
 public class Sorting {
 
