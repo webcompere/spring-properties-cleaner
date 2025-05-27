@@ -15,7 +15,7 @@ public class SpringPropertiesCleanerFixMojo extends SpringPropertiesCleanerMojoB
         super(SpcArgs.Action.scan);
     }
 
-    public SpringPropertiesCleanerFixMojo(MavenProject project) {
-        super(project, SpcArgs.Action.scan);
+    public SpringPropertiesCleanerFixMojo(MavenProject project, ProcessorFactory factory) {
+        super(project, SpcArgs.Action.fix, factory);
     }
 }

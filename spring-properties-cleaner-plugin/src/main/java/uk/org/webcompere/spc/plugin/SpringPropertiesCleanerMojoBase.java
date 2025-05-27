@@ -31,20 +31,19 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
     SpcArgs.CommonPropertiesMode common = SpcArgs.CommonPropertiesMode.none;
 
     @Parameter
-    boolean apply = true;
-
-    @Parameter
     String prefix;
 
+    private ProcessorFactory factory = Processor::new;
     private SpcArgs.Action action;
 
     public SpringPropertiesCleanerMojoBase(SpcArgs.Action action) {
         this.action = action;
     }
 
-    public SpringPropertiesCleanerMojoBase(MavenProject project, SpcArgs.Action action) {
+    public SpringPropertiesCleanerMojoBase(MavenProject project, SpcArgs.Action action, ProcessorFactory factory) {
         this.project = project;
         this.action = action;
+        this.factory = factory;
     }
 
     @Override
@@ -61,11 +60,11 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
 
             Optional.ofNullable(sort).ifPresent(arguments::setSort);
             Optional.ofNullable(common).ifPresent(arguments::setCommonProperties);
-            arguments.setApply(apply);
+            arguments.setApply(action == SpcArgs.Action.fix);
 
             Optional.ofNullable(prefix).filter(not(String::isBlank)).ifPresent(arguments::setPrefix);
 
-            var processor = new Processor(getLog()::error, getLog()::info);
+            var processor = factory.create(getLog()::error, getLog()::info);
 
             if (!processor.execute(arguments)) {
                 throw new MojoFailureException("Errors detected in properties files in " + resourceDirectory);
