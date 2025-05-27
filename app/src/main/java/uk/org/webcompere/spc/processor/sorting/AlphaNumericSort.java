@@ -1,8 +1,7 @@
 package uk.org.webcompere.spc.processor.sorting;
 
-import lombok.Getter;
-
 import java.util.Comparator;
+import lombok.Getter;
 
 /**
  * Implements a basic alpha-numeric sorting algorithm where any number within the string is tokenized into a Double for comparison and
@@ -57,7 +56,10 @@ public class AlphaNumericSort {
                 if (isNumeric(next)) {
                     newNum.append(next);
                     index++;
-                } else if ('.' == next && !hadDecimal && index < source.length() - 1 && isNumeric(source.charAt(index + 1))) {
+                } else if ('.' == next
+                        && !hadDecimal
+                        && index < source.length() - 1
+                        && isNumeric(source.charAt(index + 1))) {
                     hadDecimal = true;
                     newNum.append(next);
                     index++;

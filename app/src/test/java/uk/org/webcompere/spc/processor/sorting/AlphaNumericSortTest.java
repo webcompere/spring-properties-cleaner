@@ -1,15 +1,14 @@
 package uk.org.webcompere.spc.processor.sorting;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import static org.assertj.core.api.Assertions.assertThat;
+import static uk.org.webcompere.spc.processor.sorting.AlphaNumericSort.createSort;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static uk.org.webcompere.spc.processor.sorting.AlphaNumericSort.createSort;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class AlphaNumericSortTest {
 
@@ -34,9 +33,8 @@ class AlphaNumericSortTest {
                 Arguments.of(List.of("a", "c", "d"), List.of("a", "c", "d")),
                 Arguments.of(List.of("a", "c2", "c1"), List.of("a", "c1", "c2")),
                 Arguments.of(List.of("ab100", "c2", "ab2"), List.of("ab2", "ab100", "c2")),
-                Arguments.of(List.of("ah11foo", "ah1foo","ah2foo"), List.of("ah1foo", "ah2foo","ah11foo")),
-                Arguments.of(List.of("ah1.foo", "ah1foo","ah2foo"), List.of("ah1.foo", "ah1foo", "ah2foo")),
-                Arguments.of(List.of("ah1.1foo", "ah1foo","ah2foo"), List.of("ah1foo", "ah1.1foo", "ah2foo"))
-        );
+                Arguments.of(List.of("ah11foo", "ah1foo", "ah2foo"), List.of("ah1foo", "ah2foo", "ah11foo")),
+                Arguments.of(List.of("ah1.foo", "ah1foo", "ah2foo"), List.of("ah1.foo", "ah1foo", "ah2foo")),
+                Arguments.of(List.of("ah1.1foo", "ah1foo", "ah2foo"), List.of("ah1foo", "ah1.1foo", "ah2foo")));
     }
 }
