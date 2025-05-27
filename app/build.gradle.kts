@@ -45,8 +45,6 @@ dependencies {
     testCompileOnly("org.projectlombok:lombok:1.18.36")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
 
-    implementation("se.sawano.java:alphanumeric-comparator:2.0.0")
-
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
     testImplementation("org.assertj:assertj-core:3.27.3")

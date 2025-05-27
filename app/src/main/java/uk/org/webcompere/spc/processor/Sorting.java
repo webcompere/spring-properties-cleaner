@@ -2,14 +2,13 @@ package uk.org.webcompere.spc.processor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
-import se.sawano.java.text.AlphanumericComparator;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
+
+import static uk.org.webcompere.spc.processor.sorting.AlphaNumericSort.createSort;
 
 public class Sorting {
 
@@ -83,9 +82,5 @@ public class Sorting {
 
     private static String getKey(Setting setting, int depth) {
         return Arrays.stream(setting.getFullPathParts()).limit(depth).collect(Collectors.joining("."));
-    }
-
-    public static Comparator<CharSequence> createSort() {
-        return new AlphanumericComparator(Locale.ENGLISH);
     }
 }

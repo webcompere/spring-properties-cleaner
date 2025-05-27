@@ -78,4 +78,4 @@ to receive PRs at the moment.
 
 ## License
 
-See [MIT License](./LICENSE). Also uses [alphanumeric-comparator](https://github.com/sawano/alphanumeric-comparator?) with its own Apache 2 license.
+See [MIT License](./LICENSE).

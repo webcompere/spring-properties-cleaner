@@ -2,6 +2,7 @@ package uk.org.webcompere.spc.processor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.org.webcompere.spc.model.PropertiesFileFactory.createFile;
+import static uk.org.webcompere.spc.processor.sorting.AlphaNumericSort.createSort;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -43,7 +44,7 @@ class ConverterTest {
     @Test
     void propertiesFileIsOutputAsYml() {
         PropertiesFile file = createFile("testfile", Map.of("server.port", "8080", "server.name", "myserver"));
-        file.sortSettings(Sorting.createSort());
+        file.sortSettings(createSort());
 
         assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
                 .containsExactly("server:", "  name: myserver", "  port: 8080");
@@ -64,7 +65,7 @@ class ConverterTest {
                         "on",
                         "zebra.range",
                         "close"));
-        file.sortSettings(Sorting.createSort());
+        file.sortSettings(createSort());
 
         assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
                 .containsExactly(
@@ -83,7 +84,7 @@ class ConverterTest {
         PropertiesFile file = createFile("testfile", Map.of("server.port", "8080", "server.name", "myserver"));
         file.add(new Setting(9, List.of("# this is the address"), "server.address", "127.0.0.1"));
 
-        file.sortSettings(Sorting.createSort());
+        file.sortSettings(createSort());
 
         assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
                 .containsExactly(
@@ -118,7 +119,7 @@ class ConverterTest {
     void propertiesFileWithTrailingCommentsOutputInYml() {
         PropertiesFile file = createFile("testfile", Map.of("server.port", "8080", "server.name", "myserver"));
         file.addTrailingComments(List.of("# trailing one", "", "# trailing two"));
-        file.sortSettings(Sorting.createSort());
+        file.sortSettings(createSort());
 
         assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
                 .containsExactly("server:", "  name: myserver", "  port: 8080", "# trailing one", "", "# trailing two");
