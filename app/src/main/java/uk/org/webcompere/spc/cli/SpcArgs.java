@@ -13,20 +13,26 @@ public class SpcArgs {
     public enum Action {
         scan,
         fix
-    };
+    }
 
     public enum SortMode {
         none,
         sorted,
         clustered
-    };
+    }
 
     public enum CommonPropertiesMode {
         none,
         full,
         consistent,
         multiple
-    };
+    }
+
+    public enum WhiteSpaceMode {
+        preserve,
+        remove,
+        section
+    }
 
     @Parameter(names = "--help", description = "Show usage", help = true)
     private boolean help;
@@ -55,6 +61,14 @@ public class SpcArgs {
                     "How to sort the keys: 'sorted' (lexical order), 'clustered' (neighbours share a path, but the"
                             + " original file order is preserved as much as possible, or 'none'")
     private SortMode sort = SortMode.none;
+
+    @Parameter(
+            names = "--whitespace",
+            description = "How to handle whitespace between keys when outputting to .properties file: 'preserve' "
+                    + " (default) means leave it as it is in the original file,"
+                    + " 'remove' means to take whitespace out of the file, and 'section' means to remove whitespace but "
+                    + "insert it between keys with a different . separated prefix.")
+    private WhiteSpaceMode whiteSpaceMode = WhiteSpaceMode.preserve;
 
     @Parameter(
             names = "--common",

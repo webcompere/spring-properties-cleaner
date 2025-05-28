@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import org.junit.jupiter.api.Test;
+import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.LineError;
 import uk.org.webcompere.spc.model.PropertiesFile;
 
@@ -81,6 +82,18 @@ class ParserTest {
         parser.parse("britney=spears");
 
         assertThat(file.getSettings().get(0).getPrecedingComments()).containsExactly("# The Spearsmo");
+    }
+
+    @Test
+    void whenAddASettingWithBlankLineAndCommentBeforeThenBlankLineAndCommentInsideSetting() {
+        parser.parse("");
+        parser.parse("# The Spearsmo");
+        parser.parse("britney=spears");
+
+        assertThat(file.getSettings().get(0).getPrecedingComments()).containsExactly("", "# The Spearsmo");
+
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.preserve))
+                .containsExactly("", "# The Spearsmo", "britney=spears");
     }
 
     @Test

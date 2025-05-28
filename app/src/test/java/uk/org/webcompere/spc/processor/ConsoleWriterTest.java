@@ -25,7 +25,7 @@ class ConsoleWriterTest {
         PropertiesFile file = new PropertiesFile(new File("/src/application.props"));
         file.add(new Setting(1, List.of(), "foo", "bar"));
 
-        consoleWriter.writeAll(List.of(file), SpcArgs.SortMode.none, false);
+        consoleWriter.writeAll(List.of(file), SpcArgs.SortMode.none, SpcArgs.WhiteSpaceMode.preserve, false);
 
         assertThat(systemOut.getLines())
                 .containsExactly("--- START File: /src/application.props ---", "foo=bar", "--- ENDS ---");

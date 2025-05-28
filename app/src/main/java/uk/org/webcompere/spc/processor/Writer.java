@@ -15,13 +15,20 @@ public interface Writer {
      * Write all the files
      * @param propertiesFiles files to write
      * @param sortMode the sort mode used on the files
+     * @param whiteSpaceMode the whitespace mode to use on the file
      * @param isYml to write in YML?
      * @throws IOException on file error
      */
-    default void writeAll(List<PropertiesFile> propertiesFiles, SpcArgs.SortMode sortMode, boolean isYml)
+    default void writeAll(
+            List<PropertiesFile> propertiesFiles,
+            SpcArgs.SortMode sortMode,
+            SpcArgs.WhiteSpaceMode whiteSpaceMode,
+            boolean isYml)
             throws IOException {
         for (var file : propertiesFiles) {
-            write(Converter.targetFile(file.getSource(), isYml), Converter.toLines(file, sortMode, isYml));
+            write(
+                    Converter.targetFile(file.getSource(), isYml),
+                    Converter.toLines(file, sortMode, whiteSpaceMode, isYml));
         }
     }
 

@@ -108,6 +108,20 @@ class SpringPropertiesCleanerScanMojoTest {
     }
 
     @Test
+    void whitespaceModeIsPassedOn() throws Exception {
+        given(processor.execute(any())).willReturn(true);
+
+        SpringPropertiesCleanerScanMojo mojo =
+                new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
+        mojo.whiteSpaceMode = SpcArgs.WhiteSpaceMode.section;
+        mojo.execute();
+
+        then(processor).should().execute(captor.capture());
+
+        assertThat(captor.getValue().getWhiteSpaceMode()).isEqualTo(SpcArgs.WhiteSpaceMode.section);
+    }
+
+    @Test
     void commonPropertiesModeIsPassedOn() throws Exception {
         given(processor.execute(any())).willReturn(true);
 

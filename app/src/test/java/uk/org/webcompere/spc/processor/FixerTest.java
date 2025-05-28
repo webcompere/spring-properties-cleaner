@@ -164,7 +164,7 @@ class FixerTest {
         Fixer.fix(List.of(file1, file2), args, writer);
 
         // then a properties file for common should have appeared
-        then(writer).should().writeAll(argThat(list -> list.size() == 3), any(), anyBoolean());
+        then(writer).should().writeAll(argThat(list -> list.size() == 3), any(), any(), anyBoolean());
     }
 
     private void addLine(String key, String value) {

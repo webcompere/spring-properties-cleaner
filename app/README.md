@@ -70,6 +70,29 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
     --read path/to/resources
 ```
 
+For whitespace we can use a whitespace mode to remove or preserve blank lines in the file. The
+default is `preserve`, meaning whitespace is kept as is. We can use `remove` to remove it
+and `section` to remove whitespace from the original file, and insert extra whitespace when
+one key doesn't share the same first-level prefix as another. This makes sense when also
+using a sort:
+
+```bash
+java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
+    --action fix \
+    --sort clustered \
+    --whitespace section \
+    --read path/to/resources
+```
+
+Here, we get a line break between properties when we move from `spring.` to `redis.`:
+
+```properties
+spring.jpa=true
+spring.cache=true
+
+redis.port=9000
+```
+
 ### Extracting Common Properties
 
 If we have multiple environments then we may have properties files:

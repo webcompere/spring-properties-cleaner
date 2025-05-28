@@ -37,7 +37,7 @@ class ConverterTest {
     void propertiesFileIsOutputAsLinesWhenNotYml() {
         PropertiesFile file = createFile("testfile", Map.of("server.port", "8080", "server.name", "myserver"));
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.none, false))
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.none, SpcArgs.WhiteSpaceMode.preserve, false))
                 .containsExactlyInAnyOrder("server.port=8080", "server.name=myserver");
     }
 
@@ -46,7 +46,7 @@ class ConverterTest {
         PropertiesFile file = createFile("testfile", Map.of("server.port", "8080", "server.name", "myserver"));
         file.sortSettings(AlphaNumericSort::alphaNumericSort);
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, SpcArgs.WhiteSpaceMode.preserve, true))
                 .containsExactly("server:", "  name: myserver", "  port: 8080");
     }
 
@@ -67,7 +67,7 @@ class ConverterTest {
                         "close"));
         file.sortSettings(AlphaNumericSort::alphaNumericSort);
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, SpcArgs.WhiteSpaceMode.preserve, true))
                 .containsExactly(
                         "server:",
                         "  name: myserver",
@@ -86,7 +86,7 @@ class ConverterTest {
 
         file.sortSettings(AlphaNumericSort::alphaNumericSort);
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, SpcArgs.WhiteSpaceMode.preserve, true))
                 .containsExactly(
                         "server:",
                         "  # this is the address",
@@ -106,7 +106,7 @@ class ConverterTest {
 
         Sorting.applySort(file, SpcArgs.SortMode.clustered);
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.clustered, true))
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.clustered, SpcArgs.WhiteSpaceMode.preserve, true))
                 .containsExactly(
                         "server:",
                         "  name: myserver",
@@ -121,7 +121,7 @@ class ConverterTest {
         file.addTrailingComments(List.of("# trailing one", "", "# trailing two"));
         file.sortSettings(AlphaNumericSort::alphaNumericSort);
 
-        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, true))
+        assertThat(Converter.toLines(file, SpcArgs.SortMode.sorted, SpcArgs.WhiteSpaceMode.preserve, true))
                 .containsExactly("server:", "  name: myserver", "  port: 8080", "# trailing one", "", "# trailing two");
     }
 }

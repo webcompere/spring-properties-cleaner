@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import uk.org.webcompere.spc.cli.SpcArgs;
 
 class PropertiesFileTest {
     private PropertiesFile file = new PropertiesFile(new File("properties"));
@@ -39,21 +40,45 @@ class PropertiesFileTest {
 
     @Test
     void emptyFileConvertsToNoLines() {
-        assertThat(file.toLines()).isEmpty();
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.preserve)).isEmpty();
     }
 
     @Test
     void fileWithOneSettingCreatesOneLine() {
         file.add(new Setting(1, List.of(), "server.port", "8080"));
 
-        assertThat(file.toLines()).containsExactly("server.port=8080");
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.preserve)).containsExactly("server.port=8080");
     }
 
     @Test
     void fileWithOneSettingAndACommentCreatesTwoLines() {
         file.add(new Setting(2, List.of("# comment"), "a", "b"));
 
-        assertThat(file.toLines()).containsExactly("# comment", "a=b");
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.preserve)).containsExactly("# comment", "a=b");
+    }
+
+    @Test
+    void fileWithOneSettingACommentAndWhitespaceCreatesTwoLines() {
+        file.add(new Setting(2, List.of("", "# comment"), "a", "b"));
+
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.preserve)).containsExactly("", "# comment", "a=b");
+    }
+
+    @Test
+    void fileWithOneSettingACommentAndWhitespaceWhenWhiteSpaceIsFilteredRemovesIt() {
+        file.add(new Setting(2, List.of("", "# comment", "", "# comment 2"), "a", "b"));
+
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.remove)).containsExactly("# comment", "# comment 2", "a=b");
+    }
+
+    @Test
+    void willInsertSectionBreakBetweenSections() {
+        file.add(new Setting(1, List.of("", "", ""), "spring.server", "b"));
+        file.add(new Setting(2, List.of("", "", ""), "spring.port", "8080"));
+        file.add(new Setting(2, List.of("", "", ""), "redis.port", "9000"));
+
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.section))
+                .containsExactly("spring.server=b", "spring.port=8080", "", "redis.port=9000");
     }
 
     @Test
@@ -61,7 +86,7 @@ class PropertiesFileTest {
         file.add(new Setting(1, List.of(), "server.port", "8080"));
         file.addTrailingComments(List.of("", "# foobar"));
 
-        assertThat(file.toLines()).containsExactly("server.port=8080", "", "# foobar");
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.preserve)).containsExactly("server.port=8080", "", "# foobar");
     }
 
     @Test
@@ -71,7 +96,7 @@ class PropertiesFileTest {
 
         file.collapseIntoLast("server.port");
 
-        assertThat(file.toLines()).containsExactly("server.port=8080");
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.preserve)).containsExactly("server.port=8080");
     }
 
     @Test

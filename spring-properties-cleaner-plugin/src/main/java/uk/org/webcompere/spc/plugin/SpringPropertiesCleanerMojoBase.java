@@ -28,6 +28,9 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
     SpcArgs.CommonPropertiesMode common = SpcArgs.CommonPropertiesMode.none;
 
     @Parameter
+    SpcArgs.WhiteSpaceMode whiteSpaceMode = SpcArgs.WhiteSpaceMode.preserve;
+
+    @Parameter
     String prefix;
 
     private ProcessorFactory factory = Processor::new;
@@ -57,6 +60,8 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
 
             Optional.ofNullable(sort).ifPresent(arguments::setSort);
             Optional.ofNullable(common).ifPresent(arguments::setCommonProperties);
+            Optional.ofNullable(whiteSpaceMode).ifPresent(arguments::setWhiteSpaceMode);
+
             arguments.setApply(action == SpcArgs.Action.fix);
 
             Optional.ofNullable(prefix).filter(not(String::isBlank)).ifPresent(arguments::setPrefix);

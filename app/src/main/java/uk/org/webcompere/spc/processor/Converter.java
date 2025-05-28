@@ -18,12 +18,14 @@ public class Converter {
      * Convert a file into the lines to serialize
      * @param file the file
      * @param sortMode the sort mode the file has already been sorted with
+     * @param whiteSpaceMode the whitespace handling mode
      * @param isYml to yml?
      * @return a list of lines to write for the file
      */
-    public static List<String> toLines(PropertiesFile file, SpcArgs.SortMode sortMode, boolean isYml) {
+    public static List<String> toLines(
+            PropertiesFile file, SpcArgs.SortMode sortMode, SpcArgs.WhiteSpaceMode whiteSpaceMode, boolean isYml) {
         if (!isYml) {
-            return file.toLines();
+            return file.toLines(whiteSpaceMode);
         }
 
         return toYmlStream(file, sortMode).collect(toList());

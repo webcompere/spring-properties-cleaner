@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import lombok.Getter;
+import uk.org.webcompere.spc.cli.SpcArgs;
 
 /**
  * Model of a file
@@ -82,14 +83,32 @@ public class PropertiesFile {
      * Convert the file back into lines
      * @return the file as series of lines - settings with preceding comments and then some trailing comments
      */
-    public List<String> toLines() {
+    public List<String> toLines(SpcArgs.WhiteSpaceMode whiteSpaceMode) {
+        Function<String, Optional<String>> lineInserter =
+                whiteSpaceMode == SpcArgs.WhiteSpaceMode.section ? new SectionBreaker() : line -> Optional.empty();
         return Stream.concat(
                         settings.stream()
                                 .flatMap(setting -> Stream.concat(
-                                        setting.getPrecedingComments().stream(),
-                                        Stream.of(setting.getFullPath() + "=" + setting.getValue()))),
+                                        getCommentsStream(whiteSpaceMode, setting),
+                                        getSettingsStream(setting, lineInserter))),
                         trailingComments.stream())
                 .collect(toList());
+    }
+
+    private Stream<String> getSettingsStream(Setting setting, Function<String, Optional<String>> lineInserter) {
+        return Stream.of(
+                        lineInserter.apply(setting.getFullPath()),
+                        Optional.of(setting.getFullPath() + "=" + setting.getValue()))
+                .filter(Optional::isPresent)
+                .map(Optional::get);
+    }
+
+    private Stream<String> getCommentsStream(SpcArgs.WhiteSpaceMode whiteSpaceMode, Setting setting) {
+        return setting.getPrecedingComments().stream().filter(shouldKeepCommentLine(whiteSpaceMode));
+    }
+
+    private static Predicate<String> shouldKeepCommentLine(SpcArgs.WhiteSpaceMode whiteSpaceMode) {
+        return line -> whiteSpaceMode == SpcArgs.WhiteSpaceMode.preserve || !line.isBlank();
     }
 
     /**

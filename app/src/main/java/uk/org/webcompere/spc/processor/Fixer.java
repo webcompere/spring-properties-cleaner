@@ -21,7 +21,11 @@ public class Fixer {
                 fix(propertiesFiles.get(i), config);
             }
 
-            writer.writeAll(CommonSettings.process(propertiesFiles, config), config.getSort(), config.isYml());
+            writer.writeAll(
+                    CommonSettings.process(propertiesFiles, config),
+                    config.getSort(),
+                    config.getWhiteSpaceMode(),
+                    config.isYml());
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             return false;
