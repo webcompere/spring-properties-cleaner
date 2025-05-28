@@ -31,7 +31,6 @@ spotless {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/com.beust/jcommander
     implementation(project(":app"))
 
     implementation("org.apache.maven:maven-plugin-api:3.6.3")
@@ -75,7 +74,7 @@ tasks.named<Test>("test") {
 }
 
 jacoco {
-    toolVersion = "0.8.12" // Ensure you're using the latest version
+    toolVersion = "0.8.13"
 }
 
 tasks.jacocoTestReport {

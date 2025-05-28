@@ -43,7 +43,8 @@ class AlphaNumericSortTest {
                 Arguments.of(List.of("num 1.1.2", "num 0.1.2"), List.of("num 0.1.2", "num 1.1.2")),
                 Arguments.of(List.of("12 b", "a b"), List.of("a b", "12 b")),
                 Arguments.of(List.of("12 b", "a b", "c b"), List.of("a b", "c b", "12 b")),
-                Arguments.of(List.of("ah1.1foo", "ah1foo", "ah2foo"), List.of("ah1foo", "ah1.1foo", "ah2foo")));
+                Arguments.of(List.of("1.1", "1.2", "1.11"), List.of("1.1", "1.2", "1.11")),
+                Arguments.of(List.of("ah1.1foo", "ah1foo", "ah2foo"), List.of("ah1.1foo", "ah1foo", "ah2foo")));
     }
 
     @Test

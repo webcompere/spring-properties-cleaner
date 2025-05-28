@@ -19,9 +19,6 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
     MavenProject project;
 
     @Parameter
-    boolean identicalDuplicatesAreErrors = true;
-
-    @Parameter
     String read;
 
     @Parameter
@@ -55,7 +52,7 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
             getLog().info("Executing scan on " + resourceDirectory);
 
             arguments.setRead(resourceDirectory);
-            arguments.setIdenticalDuplicatesAreErrors(identicalDuplicatesAreErrors);
+            arguments.setIdenticalDuplicatesAreErrors(true);
             arguments.setAction(action);
 
             Optional.ofNullable(sort).ifPresent(arguments::setSort);

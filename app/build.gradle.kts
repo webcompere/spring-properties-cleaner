@@ -36,7 +36,6 @@ spotless {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/com.beust/jcommander
     implementation("com.beust:jcommander:1.82")
 
     // add in Lombok because I gave up
@@ -78,7 +77,7 @@ tasks.shadowJar {
 }
 
 jacoco {
-    toolVersion = "0.8.12" // Ensure you're using the latest version
+    toolVersion = "0.8.13"
 }
 
 tasks.jacocoTestReport {

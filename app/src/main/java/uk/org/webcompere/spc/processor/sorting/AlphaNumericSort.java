@@ -1,5 +1,6 @@
 package uk.org.webcompere.spc.processor.sorting;
 
+import java.math.BigInteger;
 import lombok.Getter;
 
 /**
@@ -10,10 +11,10 @@ public class AlphaNumericSort {
 
     @Getter
     private static class Chunker {
-        private CharSequence source;
+        private final CharSequence source;
         private int index = 0;
 
-        private Double number;
+        private BigInteger number;
         private String string;
 
         public Chunker(CharSequence source) {
@@ -43,7 +44,6 @@ public class AlphaNumericSort {
         }
 
         private void buildNumber() {
-            boolean hadDecimal = false;
             StringBuilder newNum = new StringBuilder();
             newNum.append(source.charAt(index++));
             while (index < source.length()) {
@@ -51,18 +51,11 @@ public class AlphaNumericSort {
                 if (isNumeric(next)) {
                     newNum.append(next);
                     index++;
-                } else if ('.' == next
-                        && !hadDecimal
-                        && index < source.length() - 1
-                        && isNumeric(source.charAt(index + 1))) {
-                    hadDecimal = true;
-                    newNum.append(next);
-                    index++;
                 } else {
                     break;
                 }
             }
-            number = Double.parseDouble(newNum.toString());
+            number = new BigInteger(newNum.toString());
         }
 
         private boolean isNumeric(char c) {
@@ -95,7 +88,7 @@ public class AlphaNumericSort {
 
             if (chunker1.isNumber()) {
                 if (!chunker1.getNumber().equals(chunker2.getNumber())) {
-                    return Double.compare(chunker1.getNumber(), chunker2.getNumber());
+                    return chunker1.getNumber().compareTo(chunker2.getNumber());
                 }
             } else {
                 int comparison = CharSequence.compare(chunker1.getString(), chunker2.getString());

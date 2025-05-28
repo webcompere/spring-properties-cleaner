@@ -12,7 +12,7 @@ import uk.org.webcompere.spc.cli.SpcArgs;
 public class SpringPropertiesCleanerFixMojo extends SpringPropertiesCleanerMojoBase {
 
     public SpringPropertiesCleanerFixMojo() {
-        super(SpcArgs.Action.scan);
+        super(SpcArgs.Action.fix);
     }
 
     public SpringPropertiesCleanerFixMojo(MavenProject project, ProcessorFactory factory) {
