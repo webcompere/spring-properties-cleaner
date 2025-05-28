@@ -28,7 +28,7 @@ public class SpcArgs {
         multiple
     };
 
-    @Parameter(names = "--help", description = "Show usage")
+    @Parameter(names = "--help", description = "Show usage", help = true)
     private boolean help;
 
     @Parameter(names = "--read", description = "A properties file or directory with properties files", required = true)

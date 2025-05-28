@@ -15,7 +15,10 @@ public class App {
      */
     public static void main(String[] args) {
         SpcArgs arguments = new SpcArgs();
-        JCommander cliParser = JCommander.newBuilder().addObject(arguments).build();
+        JCommander cliParser = JCommander.newBuilder()
+                .programName("Spring properties cleaner")
+                .addObject(arguments)
+                .build();
         try {
             cliParser.parse(args);
 
