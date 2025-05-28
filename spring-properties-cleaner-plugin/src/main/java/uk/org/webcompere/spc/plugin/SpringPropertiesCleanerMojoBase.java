@@ -55,7 +55,6 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
             getLog().info("Executing scan on " + resourceDirectory);
 
             arguments.setRead(resourceDirectory);
-            arguments.setIdenticalDuplicatesAreErrors(true);
             arguments.setAction(action);
 
             Optional.ofNullable(sort).ifPresent(arguments::setSort);

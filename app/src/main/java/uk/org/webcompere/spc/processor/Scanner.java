@@ -1,6 +1,5 @@
 package uk.org.webcompere.spc.processor;
 
-import static uk.org.webcompere.spc.parser.Lines.allTheSame;
 import static uk.org.webcompere.spc.parser.Lines.streamPairs;
 
 import java.util.List;
@@ -12,16 +11,15 @@ public class Scanner {
     /**
      * Scan a properties file for dangerous or harmless duplicates and properties that telescope into each other
      * @param propertiesFile file
-     * @param allDuplicatesAreErrors whether to treat any duplicate as an error, rather than just differently values ones
      * @return the results of the scan
      */
-    public static ScanResult scanForIssues(PropertiesFile propertiesFile, boolean allDuplicatesAreErrors) {
+    public static ScanResult scanForIssues(PropertiesFile propertiesFile) {
         ScanResult scanResult = new ScanResult();
 
         var errorPrefix = propertiesFile.getName() + ": ";
 
         reportErrors(propertiesFile, scanResult, errorPrefix);
-        reportDuplicates(propertiesFile, scanResult, errorPrefix, allDuplicatesAreErrors);
+        reportDuplicates(propertiesFile, scanResult, errorPrefix);
         reportTelescopingProperties(propertiesFile, scanResult, errorPrefix);
 
         return scanResult;
@@ -34,23 +32,15 @@ public class Scanner {
                         errorPrefix + "non property '" + error.getContent() + "' on L" + error.getLine()));
     }
 
-    private static void reportDuplicates(
-            PropertiesFile propertiesFile, ScanResult scanResult, String errorPrefix, boolean allDuplicatesAreErrors) {
+    private static void reportDuplicates(PropertiesFile propertiesFile, ScanResult scanResult, String errorPrefix) {
         var duplicates = propertiesFile.getDuplicates();
 
         duplicates.forEach((key, value) -> {
             scanResult.getDuplicateKeys().add(key);
-            if (!allDuplicatesAreErrors && allTheSame(value.stream().map(Setting::getValue))) {
-                scanResult.addWarning(errorPrefix + key + " has duplicate value '"
-                        + value.get(0).getValue()
-                        + "' on "
-                        + value.stream().map(val -> "L" + val.getLine()).collect(Collectors.joining(",")));
-            } else {
-                scanResult.addError(errorPrefix + key + " has duplicate values "
-                        + value.stream()
-                                .map(val -> "L" + val.getLine() + ":'" + val.getValue() + "'")
-                                .collect(Collectors.joining(",")));
-            }
+            scanResult.addError(errorPrefix + key + " has duplicate values "
+                    + value.stream()
+                            .map(val -> "L" + val.getLine() + ":'" + val.getValue() + "'")
+                            .collect(Collectors.joining(",")));
         });
     }
 

@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.model.Setting;
+import uk.org.webcompere.spc.processor.writing.Writer;
 
 @ExtendWith(MockitoExtension.class)
 class FixerTest {

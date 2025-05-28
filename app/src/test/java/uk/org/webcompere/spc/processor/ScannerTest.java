@@ -13,7 +13,7 @@ class ScannerTest {
     void whenPropertiesFileHasNoTelescopingPropertiesThenNoneFound() {
         var file = createFile("foo", Map.of("server.port", "8080", "local.host", "localhost"));
 
-        var result = scanForIssues(file, false);
+        var result = scanForIssues(file);
 
         assertThat(result.isTelescopingProperties()).isFalse();
     }
@@ -22,7 +22,7 @@ class ScannerTest {
     void whenPropertiesFileHasATelescopingProperty() {
         var file = createFile("foo", Map.of("server.port", "8080", "local.host", "localhost", "server", "myserver"));
 
-        var result = scanForIssues(file, false);
+        var result = scanForIssues(file);
 
         assertThat(result.isTelescopingProperties()).isTrue();
         assertThat(result.getWarnings()).contains("foo: property 'server' telescopes into 'server.port'");

@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
 import uk.org.webcompere.spc.parser.Parser;
+import uk.org.webcompere.spc.processor.writing.ConsoleWriter;
+import uk.org.webcompere.spc.processor.writing.FileWriter;
+import uk.org.webcompere.spc.processor.writing.StoringWriter;
+import uk.org.webcompere.spc.processor.writing.Writer;
 
 public class Processor {
 
@@ -65,29 +69,51 @@ public class Processor {
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
 
-        List<PropertiesFile> loaded = new ArrayList<>();
-        List<ScanResult> results = new ArrayList<>();
-        for (File file : toProcess) {
-            var propertiesFile = load(file);
-            loaded.add(propertiesFile);
-            var result = scanForIssues(propertiesFile, request.isIdenticalDuplicatesAreErrors());
-            results.add(result);
-            errors.addAll(result.getErrors());
-            warnings.addAll(result.getWarnings());
-        }
-
-        errors.forEach(errorLog);
-        warnings.forEach(infoLog);
-
-        if (request.getAction() == SpcArgs.Action.fix) {
-            if (request.isYml() && results.stream().anyMatch(ScanResult::isTelescopingProperties)) {
-                errorLog.accept("Cannot convert to YML owing to telescoping properties");
-                return false;
+        try {
+            List<PropertiesFile> loaded = new ArrayList<>();
+            List<ScanResult> results = new ArrayList<>();
+            for (File file : toProcess) {
+                var propertiesFile = load(file);
+                loaded.add(propertiesFile);
+                var result = scanForIssues(propertiesFile);
+                results.add(result);
+                errors.addAll(result.getErrors());
+                warnings.addAll(result.getWarnings());
             }
-            return Fixer.fix(loaded, request, writer(request));
+
+            if (request.getAction() == SpcArgs.Action.fix) {
+                return performFix(request, results, loaded);
+            }
+
+            checkImpactIfFixed(request, loaded, errors);
+
+            return errors.isEmpty();
+        } finally {
+            errors.forEach(errorLog);
+            warnings.forEach(infoLog);
+        }
+    }
+
+    private void checkImpactIfFixed(SpcArgs request, List<PropertiesFile> loaded, List<String> errors) {
+        // cannot do this for yaml
+        if (request.isYml()) {
+            return;
         }
 
-        return errors.isEmpty();
+        StoringWriter storingWriter = new StoringWriter();
+        Fixer.fix(loaded, request, storingWriter);
+
+        List<File> filesThatChanged = storingWriter.whichAreDifferent();
+        filesThatChanged.forEach(
+                file -> errors.add("File '" + file.getName() + "' does not meet standard - have you run fix?"));
+    }
+
+    private boolean performFix(SpcArgs request, List<ScanResult> results, List<PropertiesFile> loaded) {
+        if (request.isYml() && results.stream().anyMatch(ScanResult::isTelescopingProperties)) {
+            errorLog.accept("Cannot convert to YML owing to telescoping properties");
+            return false;
+        }
+        return Fixer.fix(loaded, request, writer(request));
     }
 
     private PropertiesFile load(File file) throws IOException {

@@ -29,8 +29,7 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
    --read path/to/resources
 ```
 
-A scan will exit with code 1 if the file contains duplicates with different values. The scan
-will also warn of telescoping values which would prevent a conversion to YML.
+A scan will exit with code 1 if the file contains duplicates. The scan will also warn of telescoping values which would prevent a conversion to YML.
 
 ### Fixing/Rewriting
 

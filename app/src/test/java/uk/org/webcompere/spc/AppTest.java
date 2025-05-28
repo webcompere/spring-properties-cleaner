@@ -10,6 +10,7 @@ import uk.org.webcompere.systemstubs.jupiter.SystemStub;
 import uk.org.webcompere.systemstubs.jupiter.SystemStubsExtension;
 import uk.org.webcompere.systemstubs.security.AbortExecutionException;
 import uk.org.webcompere.systemstubs.security.SystemExit;
+import uk.org.webcompere.systemstubs.stream.SystemErr;
 import uk.org.webcompere.systemstubs.stream.SystemOut;
 
 @ExtendWith(SystemStubsExtension.class)
@@ -20,6 +21,9 @@ class AppTest {
 
     @SystemStub
     private SystemOut systemOut = new SystemOut(tapAndOutput());
+
+    @SystemStub
+    private SystemErr systemErr = new SystemErr(tapAndOutput());
 
     @Test
     void whenParametersNotProvidedThenExit() {
@@ -45,10 +49,20 @@ class AppTest {
     }
 
     @Test
-    void readingDuplicatesNotError() {
-        App.main(new String[] {"--read", "src/test/resources/example-with-duplicate-identical.properties"});
+    void readingDuplicatesIsError() {
+        assertThatThrownBy(() -> App.main(
+                        new String[] {"--read", "src/test/resources/example-with-duplicate-identical.properties"}))
+                .isInstanceOf(AbortExecutionException.class);
 
-        assertThat(systemOut.getLines())
-                .contains("example-with-duplicate-identical.properties: property1 has duplicate value 'foo' on L2,L7");
+        assertThat(systemErr.getLines())
+                .contains(
+                        "example-with-duplicate-identical.properties: property1 has duplicate values L2:'foo',L7:'foo'");
+    }
+
+    @Test
+    void readingGoodFileIsNotError() {
+        App.main(new String[] {"--read", "src/test/resources/example-with-no-duplicate.properties"});
+
+        assertThat(systemOut.getLines()).containsExactly("");
     }
 }

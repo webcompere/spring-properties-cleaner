@@ -50,12 +50,6 @@ public class SpcArgs {
     private Action action = Action.scan;
 
     @Parameter(
-            names = "--allDuplicatesErrors",
-            description = "Treat any duplicate key as an error, even if it is the same value. (Default to off, where "
-                    + "only duplicates with different values are errors)")
-    private boolean identicalDuplicatesAreErrors;
-
-    @Parameter(
             names = "--sort",
             description =
                     "How to sort the keys: 'sorted' (lexical order), 'clustered' (neighbours share a path, but the"

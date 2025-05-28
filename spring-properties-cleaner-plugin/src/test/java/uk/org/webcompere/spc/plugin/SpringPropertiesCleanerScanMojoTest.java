@@ -81,19 +81,6 @@ class SpringPropertiesCleanerScanMojoTest {
     }
 
     @Test
-    void identicalDuplicatesAreErrorsTrueIsHardCoded() throws Exception {
-        given(processor.execute(any())).willReturn(true);
-
-        SpringPropertiesCleanerScanMojo mojo =
-                new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
-        mojo.execute();
-
-        then(processor).should().execute(captor.capture());
-
-        assertThat(captor.getValue().isIdenticalDuplicatesAreErrors()).isTrue();
-    }
-
-    @Test
     void sortModeIsPassedOn() throws Exception {
         given(processor.execute(any())).willReturn(true);
 

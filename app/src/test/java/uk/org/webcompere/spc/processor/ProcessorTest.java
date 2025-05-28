@@ -24,6 +24,11 @@ class ProcessorTest {
     private static final File EXAMPLE_WITH_DUPLICATE_IDENTICAL_PROPERTIES = Paths.get(
                     "src", "test", "resources", "example-with-duplicate-identical.properties")
             .toFile();
+
+    private static final File EXAMPLE_WITH_NO_DUPLICATE_PROPERTIES = Paths.get(
+                    "src", "test", "resources", "example-with-no-duplicate.properties")
+            .toFile();
+
     private static final File EXAMPLE_DIRECTORY =
             Paths.get("src", "test", "resources").toFile();
     private static final File EXAMPLE_BROKEN =
@@ -114,18 +119,7 @@ class ProcessorTest {
     }
 
     @Test
-    void whenProcessingFileWithDuplicateIdenticalPropertiesThenWarning() throws Exception {
-        assertThat(processor.process(EXAMPLE_WITH_DUPLICATE_IDENTICAL_PROPERTIES, emptyArgs))
-                .isTrue();
-
-        assertThat(systemOut.getLines())
-                .contains("example-with-duplicate-identical.properties: property1 has duplicate value 'foo' on L2,L7");
-    }
-
-    @Test
-    void whenProcessingFileWithIdenticalDuplicatesThenIsErrorWhenAllDuplicatesConfiguredAsError() throws Exception {
-        emptyArgs.setIdenticalDuplicatesAreErrors(true);
-
+    void whenProcessingFileWithIdenticalDuplicatesThenIsError() throws Exception {
         assertThat(processor.process(EXAMPLE_WITH_DUPLICATE_IDENTICAL_PROPERTIES, emptyArgs))
                 .isFalse();
 
@@ -154,5 +148,24 @@ class ProcessorTest {
                 .isFalse();
 
         assertThat(systemErr.getLines()).contains("Cannot convert to YML owing to telescoping properties");
+    }
+
+    @Test
+    void scanningFileThatIsOkIsNoError() throws Exception {
+        assertThat(processor.process(EXAMPLE_WITH_NO_DUPLICATE_PROPERTIES, emptyArgs))
+                .isTrue();
+    }
+
+    @Test
+    void scanningFileThatIsOkWithChangesForSortingIsError() throws Exception {
+        SpcArgs args = new SpcArgs();
+        args.setAction(SpcArgs.Action.scan);
+        args.setSort(SpcArgs.SortMode.sorted);
+
+        assertThat(processor.process(EXAMPLE_WITH_NO_DUPLICATE_PROPERTIES, args))
+                .isFalse();
+
+        assertThat(systemErr.getLines())
+                .contains("File 'example-with-no-duplicate.properties' does not meet standard - have you run fix?");
     }
 }

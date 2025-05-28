@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.LineError;
 import uk.org.webcompere.spc.model.PropertiesFile;
+import uk.org.webcompere.spc.processor.writing.Writer;
 
 public class Fixer {
 

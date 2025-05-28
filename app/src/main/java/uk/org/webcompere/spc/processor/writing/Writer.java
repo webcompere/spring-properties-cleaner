@@ -1,10 +1,11 @@
-package uk.org.webcompere.spc.processor;
+package uk.org.webcompere.spc.processor.writing;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.PropertiesFile;
+import uk.org.webcompere.spc.processor.Converter;
 
 /**
  * For writing fixed files

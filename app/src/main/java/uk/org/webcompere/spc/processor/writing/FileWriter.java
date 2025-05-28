@@ -1,4 +1,4 @@
-package uk.org.webcompere.spc.processor;
+package uk.org.webcompere.spc.processor.writing;
 
 import java.io.File;
 import java.io.IOException;
