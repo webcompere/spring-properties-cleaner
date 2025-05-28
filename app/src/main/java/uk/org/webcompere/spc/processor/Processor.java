@@ -47,35 +47,23 @@ public class Processor {
     }
 
     boolean process(File file, SpcArgs request) throws IOException {
-        var propertiesFile = load(file);
-
-        var scanResult = scanForIssues(propertiesFile, request.isIdenticalDuplicatesAreErrors());
-        ;
-
-        scanResult.getErrors().forEach(errorLog);
-        scanResult.getWarnings().forEach(infoLog);
-
-        if (request.getAction() == SpcArgs.Action.fix) {
-            if (request.isYml() && scanResult.isTelescopingProperties()) {
-                errorLog.accept("Cannot convert to YML owing to telescoping properties");
-                return false;
-            }
-
-            return Fixer.fix(List.of(propertiesFile), request, writer(request));
-        }
-
-        return scanResult.getErrors().isEmpty();
+        return processFiles(request, List.of(file));
     }
 
     boolean processDirectory(File directory, SpcArgs request) throws IOException {
         String prefix = request.getPrefix();
-        List<String> errors = new ArrayList<>();
-        List<String> warnings = new ArrayList<>();
 
         List<File> toProcess = Arrays.stream(directory.listFiles())
                 .filter(file -> file.getName().toLowerCase().endsWith(".properties"))
                 .filter(file -> file.getName().toLowerCase().startsWith(prefix.toLowerCase()))
                 .collect(Collectors.toList());
+
+        return processFiles(request, toProcess);
+    }
+
+    private boolean processFiles(SpcArgs request, List<File> toProcess) throws IOException {
+        List<String> errors = new ArrayList<>();
+        List<String> warnings = new ArrayList<>();
 
         List<PropertiesFile> loaded = new ArrayList<>();
         List<ScanResult> results = new ArrayList<>();

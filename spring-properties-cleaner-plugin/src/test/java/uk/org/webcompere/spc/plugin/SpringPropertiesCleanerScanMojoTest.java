@@ -113,7 +113,7 @@ class SpringPropertiesCleanerScanMojoTest {
 
         SpringPropertiesCleanerScanMojo mojo =
                 new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
-        mojo.whiteSpaceMode = SpcArgs.WhiteSpaceMode.section;
+        mojo.whitespace = SpcArgs.WhiteSpaceMode.section;
         mojo.execute();
 
         then(processor).should().execute(captor.capture());
