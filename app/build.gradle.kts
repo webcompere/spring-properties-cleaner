@@ -51,6 +51,7 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter:5.16.1")
 
     testImplementation("uk.org.webcompere:system-stubs-jupiter:2.1.7")
+    testImplementation("uk.org.webcompere:test-gadgets-jupiter:1.0.2")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
