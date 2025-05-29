@@ -65,6 +65,13 @@ public class SpcArgs {
     private WhiteSpaceMode whiteSpaceMode = WhiteSpaceMode.preserve;
 
     @Parameter(
+            names = "--inlinePrefix",
+            description = "Scans all the properties in the file to see if, when used in other properties, "
+                    + "they are prefixed by something matching the regular expression provided. If they are, "
+                    + "and it's the same in every case, then the prefix will be inlined into the value.")
+    private String inlinePrefix;
+
+    @Parameter(
             names = "--common",
             description = "Find common properties. In scan mode, this will warn, in fix mode, this will create them. "
                     + "There are degrees of commonality. `full` - means must have same value everywhere to be common, "

@@ -123,4 +123,36 @@ class PropertiesFileTest {
         assertThat(file.getDuplicates().entrySet().stream().map(Map.Entry::getKey))
                 .containsExactly("server.port", "app.name", "local.host");
     }
+
+    @Test
+    void mapToleratesDuplicates() {
+        file.add(new Setting(1, List.of(), "server.port", "8080"));
+        file.add(new Setting(2, List.of(), "server.port", "8080"));
+        file.add(new Setting(3, List.of(), "app.name", "myApp"));
+        file.add(new Setting(4, List.of(), "app.name", "myApp"));
+        file.add(new Setting(5, List.of(), "local.host", "localhost"));
+        file.add(new Setting(6, List.of(), "local.host", "localhost"));
+
+        assertThat(file.getAsMap())
+                .containsEntry("server.port", "8080")
+                .containsEntry("app.name", "myApp")
+                .containsEntry("local.host", "localhost");
+    }
+
+    @Test
+    void fixUpsCanBeApplied() {
+        file.add(new Setting(1, List.of(), "server.port", "8080"));
+        file.add(new Setting(2, List.of(), "server.port", "8080"));
+        file.add(new Setting(3, List.of(), "app.name", "myApp"));
+        file.add(new Setting(4, List.of(), "app.name", "myApp"));
+        file.add(new Setting(5, List.of(), "local.host", "localhost"));
+        file.add(new Setting(6, List.of(), "local.host", "localhost"));
+
+        file.applyFixups(Map.of("server.port", "8081", "none", "foo"));
+
+        assertThat(file.getAsMap())
+                .containsEntry("server.port", "8081")
+                .containsEntry("app.name", "myApp")
+                .containsEntry("local.host", "localhost");
+    }
 }

@@ -29,7 +29,11 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
    --read path/to/resources
 ```
 
-A scan will exit with code 1 if the file contains duplicates. The scan will also warn of telescoping values which would prevent a conversion to YML.
+A scan will exit with code 1 if the file contains errors. The scan will also warn of telescoping values which would prevent a conversion to YML.
+
+> Note: providing the settings for fixing into scan mode will cause
+> the scan to decide how fixing might look, and return an error
+> if the fixing preferences would require the files to be changed
 
 ### Fixing/Rewriting
 
@@ -47,6 +51,8 @@ Fixing will:
     - adding together all commented lines directly before each duplicate
 - Take all non-comment and non-property lines and add them as comments at the end of the file
 - Apply the chosen sort to the property lines
+- Modify sort order and whitespace
+- Modify key values with `inlinePrefix` mode
 
 This will output new files to the console unless we add `--apply`
 
@@ -56,6 +62,8 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
     --apply \
     --read path/to/resources
 ```
+
+### Sorting
 
 For sorting we can choose the sort mode of `sorted`, `clustered` or `none`. In `sorted`, the properties
 are sorted lexically (respecting the value of numbers). In `clustered`, the original order of the file is preserved
@@ -68,6 +76,8 @@ java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
     --sort clustered \
     --read path/to/resources
 ```
+
+### Whitespace
 
 For whitespace we can use a whitespace mode to remove or preserve blank lines in the file. The
 default is `preserve`, meaning whitespace is kept as is. We can use `remove` to remove it
@@ -90,6 +100,45 @@ spring.jpa=true
 spring.cache=true
 
 redis.port=9000
+```
+
+### Inline Prefix
+
+This is intended to help with moving to common properties. Imagine
+we have a file like this:
+
+```properties
+# application-dev.properties
+server.address=my.server.com
+server.path1=http://${server.address}/path/one
+server.path2=http://${server.address}/path/two
+```
+
+If in some of our profiles, the paths start `https` and some
+they start `http`, then the common properties file cannot
+take the `server.path`s out into `application.properties`.
+
+If we could modify the file to become:
+
+```properties
+# application-dev.properties
+server.address=http://my.server.com
+server.path1=${server.address}/path/one
+server.path2=${server.address}/path/two
+```
+
+Then the http prefix will be part of `server.address` and the
+paths will be standard regardless of http scheme.
+
+This can be achieved using the `inlinePrefix` option, providing
+a regular expression as the prefix matcher.
+
+```bash
+java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
+    --action fix \
+    --sort clustered \
+    --inlinePrefix https?:// \
+    --read path/to/resources
 ```
 
 ### Extracting Common Properties

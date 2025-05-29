@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toMap;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,44 @@ public class PropertiesFile {
                 .stream()
                 .filter(entry -> entry.getValue().size() > 1)
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+    }
+
+    /**
+     * Get a single property from the file
+     * @param fullPath the path of the property
+     * @return the value of the property or null
+     */
+    public String get(String fullPath) {
+        return settings.stream()
+                .filter(setting -> setting.getFullPath().equals(fullPath))
+                .map(Setting::getValue)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Build the properties into a map - this will collapse duplicates randomly
+     * so best done after a de-duping
+     * @return a map of full path to value
+     */
+    public Map<String, String> getAsMap() {
+        Map<String, String> map = new HashMap<>();
+        for (Setting setting : settings) {
+            map.put(setting.getFullPath(), setting.getValue());
+        }
+        return map;
+    }
+
+    /**
+     * Make changes to the given properties. If we have them in this file, then we'll amend them
+     * @param propertiesToFix the fix up to apply
+     */
+    public void applyFixups(Map<String, String> propertiesToFix) {
+        for (Setting setting : settings) {
+            if (propertiesToFix.containsKey(setting.getFullPath())) {
+                setting.setValue(propertiesToFix.get(setting.getFullPath()));
+            }
+        }
     }
 
     /**

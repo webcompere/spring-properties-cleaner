@@ -1,6 +1,8 @@
 package uk.org.webcompere.spc.processor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import uk.org.webcompere.spc.cli.SpcArgs;
 import uk.org.webcompere.spc.model.LineError;
@@ -49,5 +51,21 @@ public class Fixer {
                 .collect(Collectors.toList()));
 
         Sorting.applySort(file, config.getSort());
+
+        if (config.getInlinePrefix() != null) {
+            processInliningOfPrefixes(file, config.getInlinePrefix());
+        }
+    }
+
+    private static void processInliningOfPrefixes(PropertiesFile file, String prefixRegex) {
+        var items = file.getAsMap();
+        Map<String, String> fixups = new HashMap<>();
+
+        for (String propertyName : items.keySet()) {
+            Inliner inliner = new Inliner(propertyName, prefixRegex);
+            fixups.putAll(inliner.scanForInlining(items));
+        }
+
+        file.applyFixups(fixups);
     }
 }

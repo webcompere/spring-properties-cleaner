@@ -31,6 +31,9 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
     SpcArgs.WhiteSpaceMode whitespace = SpcArgs.WhiteSpaceMode.preserve;
 
     @Parameter
+    String inlinePrefix;
+
+    @Parameter
     String prefix;
 
     private ProcessorFactory factory = Processor::new;
@@ -60,6 +63,7 @@ public abstract class SpringPropertiesCleanerMojoBase extends AbstractMojo {
             Optional.ofNullable(sort).ifPresent(arguments::setSort);
             Optional.ofNullable(common).ifPresent(arguments::setCommonProperties);
             Optional.ofNullable(whitespace).ifPresent(arguments::setWhiteSpaceMode);
+            arguments.setInlinePrefix(inlinePrefix);
 
             arguments.setApply(action == SpcArgs.Action.fix);
 

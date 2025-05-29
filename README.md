@@ -5,8 +5,6 @@
 [![Build](https://github.com/webcompere/spring-properties-cleaner/actions/workflows/build-actions.yml/badge.svg?branch=main)](https://github.com/webcompere/spring-properties-cleaner/actions/workflows/build-actions.yml)
 [![codecov](https://codecov.io/gh/webcompere/spring-properties-cleaner/graph/badge.svg?token=OlKMD7tq48)](https://codecov.io/gh/webcompere/spring-properties-cleaner)
 
-> Note: this is WIP and the maven plugin is untested
-
 ## Overview
 
 Utility to clean up spring properties files.
@@ -48,10 +46,12 @@ make it easier to review each step, here's a recommended fix order:
 
 - Eliminate duplicates
 - Apply `clustered` sort (optional, but useful)
+- Inline regular prefixes to properties to make a common file easier to build (optional)
 - Extract a common properties file using `full` mode to get properties that are duplicated the same everywhere
 - Extract common properties using `consistent` mode to bring in more properties - checking that you're happy to have all of these in the common properties file
 - Extract common properties using `multiple` to bring in any common properties that appear often, though not always - again checking the impact
 - Apply a `sorted` sort to put everything in lexical (with numeric awareness) order (optional)
+- Make whitespace changes if required
 
 The scanning tool cannot scan `.yml` files, so converting everything to new `.yml` files
 is a final option you might take using the CLI. If you wish to keep
@@ -61,9 +61,6 @@ fixes at your scan level if something has gone wrong in the current version.
 
 ## TODO
 
-- Test maven plugins in detail
-  - refactor the scanning and fixing code to share more
-  - make it so that the fixing settings all apply at scan time as things that can fail the scan
 - In YAML mode allow for a minimum length of property to be tree-ified if solo
 - In YAML handle telescoping properties like this:
   ```yml

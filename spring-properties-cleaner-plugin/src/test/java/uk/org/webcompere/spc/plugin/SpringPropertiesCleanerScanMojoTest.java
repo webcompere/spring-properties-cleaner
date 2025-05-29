@@ -109,6 +109,20 @@ class SpringPropertiesCleanerScanMojoTest {
     }
 
     @Test
+    void inlinePrefixModeIsPassedOn() throws Exception {
+        given(processor.execute(any())).willReturn(true);
+
+        SpringPropertiesCleanerScanMojo mojo =
+                new SpringPropertiesCleanerScanMojo(validMavenProject(), (a, b) -> processor);
+        mojo.inlinePrefix = "http";
+        mojo.execute();
+
+        then(processor).should().execute(captor.capture());
+
+        assertThat(captor.getValue().getInlinePrefix()).isEqualTo("http");
+    }
+
+    @Test
     void commonPropertiesModeIsPassedOn() throws Exception {
         given(processor.execute(any())).willReturn(true);
 

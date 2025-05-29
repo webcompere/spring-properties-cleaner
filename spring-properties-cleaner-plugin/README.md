@@ -28,6 +28,12 @@ For configuration, add properties:
 
     <!-- Default: none, Options: consistent, multiple, full -->
     <common>consistent</common>
+    
+    <!-- Default: preserve, Options: remove, section -->
+    <whitespace>preserve</whitespace>
+    
+    <!-- If we want to inline into a property a prefix that matches the regex that always appears before it -->
+    <inlinePrefix>https?://</inlinePrefix>
   </configuration>
 ```
 

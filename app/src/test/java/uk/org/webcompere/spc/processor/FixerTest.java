@@ -156,6 +156,52 @@ class FixerTest {
     }
 
     @Test
+    void whenUsingInlinePrefixAndNoMatchThenNoInline() {
+        addLine("host", "localhost");
+        addLine("path.to.property1", "ftp://{host}");
+        addLine("path.to.property2", "smtp://{host}");
+
+        var args = new SpcArgs();
+        args.setInlinePrefix("https?://");
+
+        Fixer.fix(file, args);
+
+        assertThat(file.get("host")).isEqualTo("localhost");
+        assertThat(file.get("path.to.property1")).isEqualTo("ftp://{host}");
+    }
+
+    @Test
+    void whenUsingInlinePrefixAndPrefixesVaryThenNoInline() {
+        addLine("host", "localhost");
+        addLine("path.to.property1", "http://{host}");
+        addLine("path.to.property2", "https://{host}");
+
+        var args = new SpcArgs();
+        args.setInlinePrefix("https?://");
+
+        Fixer.fix(file, args);
+
+        assertThat(file.get("host")).isEqualTo("localhost");
+        assertThat(file.get("path.to.property1")).isEqualTo("http://{host}");
+    }
+
+    @Test
+    void whenUsingInlinePrefixAndPrefixesMatchThenNoInline() {
+        addLine("host", "localhost");
+        addLine("path.to.property1", "http://${host}/path1");
+        addLine("path.to.property2", "http://${host}/path2");
+
+        var args = new SpcArgs();
+        args.setInlinePrefix("https?://");
+
+        Fixer.fix(file, args);
+
+        assertThat(file.get("host")).isEqualTo("http://localhost");
+        assertThat(file.get("path.to.property1")).isEqualTo("${host}/path1");
+        assertThat(file.get("path.to.property2")).isEqualTo("${host}/path2");
+    }
+
+    @Test
     void whenConfiguredForCommonACommonFileCanAppear() throws Exception {
         PropertiesFile file1 = new PropertiesFile(new File("application-dev.properties"));
         PropertiesFile file2 = new PropertiesFile(new File("application-prod.properties"));
