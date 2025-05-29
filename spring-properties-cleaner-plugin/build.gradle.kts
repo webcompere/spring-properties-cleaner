@@ -33,6 +33,7 @@ spotless {
 }
 
 signing {
+    useGpgCmd()
     sign(publishing.publications)
 }
 
@@ -63,7 +64,7 @@ mavenPlugin {
     name = "Spring Properties Cleaner Plugin"
     artifactId = "spring-properties-cleaner-plugin"
     groupId = "uk.org.webcompere"
-    version = "1.0.0"
+
     description = project.description
 }
 

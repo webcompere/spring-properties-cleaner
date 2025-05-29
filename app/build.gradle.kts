@@ -38,6 +38,7 @@ spotless {
 }
 
 signing {
+    useGpgCmd()
     sign(publishing.publications)
 }
 
@@ -102,7 +103,6 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "uk.org.webcompere"
             artifactId = "spring-properties-cleaner-app"
-            version = "1.0.0"
 
             artifact(tasks.shadowJar.get()) {
                 classifier = null // Ensures it replaces the main JAR

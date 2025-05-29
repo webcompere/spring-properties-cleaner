@@ -35,6 +35,7 @@ public class Processor {
      * Process the request from the CLI
      * @param request the request
      * @return <code>false</code> if to "fail" the job
+     * @throws IOException if there's any problem reading or writing files
      */
     public boolean execute(SpcArgs request) throws IOException {
         Path path = Path.of(request.getRead());

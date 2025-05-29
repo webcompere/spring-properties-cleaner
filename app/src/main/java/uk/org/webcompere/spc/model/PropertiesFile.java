@@ -81,6 +81,7 @@ public class PropertiesFile {
 
     /**
      * Convert the file back into lines
+     * @param whiteSpaceMode the way to handle whitespace in the file
      * @return the file as series of lines - settings with preceding comments and then some trailing comments
      */
     public List<String> toLines(SpcArgs.WhiteSpaceMode whiteSpaceMode) {
