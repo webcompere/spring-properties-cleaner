@@ -22,6 +22,7 @@ plugins {
     id 'com.diffplug.spotless' version '7.0.3'
 
     id 'signing'
+    id 'maven-publish' 
 }
 
 repositories {
@@ -81,7 +82,7 @@ test {
 shadowJar { // import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar if needed for type-aware configuration
     archiveBaseName = 'spring-properties-cleaner'
     archiveClassifier = ''
-    archiveVersion = '1.0'
+    archiveVersion = project.version
 }
 
 jacoco {

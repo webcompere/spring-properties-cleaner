@@ -32,3 +32,12 @@ jobs:
         run: ./gradlew githubRelease
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Release to maven central on main
+        if: github.ref == 'refs/heads/main'
+        env:
+          MAVEN_USERNAME: ${{secrets.OSSRH_USERNAME}}
+          MAVEN_PASSWORD: ${{secrets.OSSRH_TOKEN}}
+        run: ./gradlew publish
+
+
