@@ -16,8 +16,6 @@ plugins {
 
     id 'com.diffplug.spotless' version '7.0.3'
 
-    id 'maven-publish'
-
     id 'signing'
 }
 
@@ -58,13 +56,6 @@ dependencies {
 
     testImplementation 'uk.org.webcompere:system-stubs-jupiter:2.1.7'
     testImplementation 'org.apache.maven:maven-core:3.6.3'
-}
-
-mavenPlugin {
-    name = 'Spring Properties Cleaner Plugin'
-    artifactId = 'spring-properties-cleaner-plugin'
-    groupId = 'uk.org.webcompere'
-    description = project.description
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
