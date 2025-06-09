@@ -38,6 +38,8 @@ jobs:
         env:
           MAVEN_USERNAME: ${{secrets.OSSRH_USERNAME}}
           MAVEN_PASSWORD: ${{secrets.OSSRH_TOKEN}}
+          GPG_PRIVATE_KEY: ${{secrets.GPG_PRIVATE_KEY}}
+          GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
         run: |
           export GPG_TTY=`tty`
           ./gradlew publishAggregationToCentralPortal
