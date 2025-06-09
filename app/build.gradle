@@ -8,6 +8,8 @@
 plugins {
     id 'application'
 
+    id 'org.kordamp.gradle.java-project' version '0.22.0'
+
     // for fat jars
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 
@@ -21,8 +23,6 @@ plugins {
 
     id 'com.diffplug.spotless' version '7.0.3'
 
-    id 'signing'
-    id 'maven-publish' 
 }
 
 repositories {
@@ -34,11 +34,6 @@ spotless {
     java {
         palantirJavaFormat()
     }
-}
-
-signing {
-    useGpgCmd()
-    sign publishing.publications
 }
 
 dependencies {
@@ -96,20 +91,5 @@ tasks.jacocoTestReport {
         xml.required = true
         html.required = true
         csv.required = false
-    }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) { // import org.gradle.api.publish.maven.MavenPublication if needed
-            groupId = 'uk.org.webcompere'
-            artifactId = 'spring-properties-cleaner-app'
-
-            artifact(tasks.shadowJar) {
-                classifier = null // Ensures it replaces the main JAR
-            }
-            artifact tasks.named('sourcesJar')
-            artifact tasks.named('javadocJar')
-        }
     }
 }

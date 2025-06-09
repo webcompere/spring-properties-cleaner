@@ -17,7 +17,6 @@ plugins {
     id 'com.diffplug.spotless' version '7.0.3'
 
     id 'signing'
-    id 'maven-publish' 
 }
 
 repositories {
@@ -29,11 +28,6 @@ spotless {
     java {
         palantirJavaFormat()
     }
-}
-
-signing {
-    useGpgCmd()
-    sign publishing.publications
 }
 
 dependencies {

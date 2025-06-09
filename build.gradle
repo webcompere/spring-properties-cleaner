@@ -5,86 +5,51 @@
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/8.13/userguide/building_java_projects.html in the Gradle documentation.
  */
 plugins {
-    id("org.shipkit.shipkit-auto-version") version "2.1.2"
-    id("org.shipkit.shipkit-changelog") version "2.0.1"
-    id("org.shipkit.shipkit-github-release") version "2.0.1"
-    id 'maven-publish'
+    id 'org.jreleaser' version '1.17.0'
+    id 'base'
 }
 
-tasks.named("generateChangelog") {
-    previousRevision = project.ext.'shipkit-auto-version.previous-tag'
-    githubToken = System.getenv("GITHUB_TOKEN") // using env var to avoid checked-in secrets
-    repository = "webcompere/spring-properties-cleaner"
-}
+jreleaser {
+    project {
+        // Configure version incrementing
+        version {
+            autoIncrement = true // Enable auto-incrementing
+        }
 
-tasks.named("githubRelease") {
-    dependsOn tasks.named("generateChangelog")
-    repository = "webcompere/spring-properties-cleaner"
-    changelog = tasks.named("generateChangelog").get().outputFile
-    githubToken = System.getenv("GITHUB_TOKEN") // using env var to avoid checked-in secrets
-    newTagRevision = System.getenv("GITHUB_SHA")   // using an env var automatically exported by Github Actions
-}
-
-allprojects {
-    // Define common properties that can be used in the POM metadata
-    ext {
-        developerId = 'webcompere'
-        developerName = 'Ashley Frieze' // Or your name
-        developerEmail = 'ashley' // Your email
-        projectUrl = 'https://github.com/webcompere/spring-properties-cleaner'
-        licenseName = 'MIT License'
-        licenseUrl = 'https://github.com/webcompere/spring-properties-cleaner?tab=MIT-1-ov-file#readme'
-        scmUrl = 'https://github.com/webcompere/spring-properties-cleaner.git'
-        scmConnection = 'scm:git:https://github.com/webcompere/spring-properties-cleaner.git'
-        scmDeveloperConnection = 'scm:git:git@github.com:webcompere/spring-properties-cleaner.git'
+        authors = ['Ashley Frieze']
+        license = 'MIT'
+        links {
+            homepage = 'https://github.com/webcompere/spring-properties-cleaner'
+        }
+        inceptionYear = '2025'
     }
 
-    // Configure all publications
-    publishing {
-        repositories {
-            maven {
-                name = "CENTRAL"
-                url = "https://central.sonatype.com/api/v1/publisher/upload"
-                credentials {
-                    username = System.getenv("MAVEN_USERNAME")
-                    password = System.getenv("MAVEN_PASSWORD")
+    release {
+        github {
+            overwrite = true
+            repoOwner = 'webcompere'
+            name = 'spring-properties-cleaner'
+            sign = true
+        }
+    }
+
+    deploy {
+        maven {
+            mavenCentral {
+                app {
+                    url = 'https://central.sonatype.com/s01'
+                    username = System.getenv('MAVEN_USERNAME')
+                    password = System.getenv('MAVEN_PASSWORD')
+                    applyMavenCentralRules = true
                 }
             }
         }
+    }
 
-        publications.withType(MavenPublication) {
-            pom {
-                name = project.name // Use the project's name for the POM name
-                description = 'Spring Properties Cleaner - A utility to clean properties from Spring Boot applications.' // General description for the project
-                url = projectUrl
-
-                licenses {
-                    license {
-                        name = licenseName
-                        url = licenseUrl
-                        distribution = 'repo' // Common distribution type
-                    }
-                }
-
-                developers {
-                    developer {
-                        id = developerId
-                        name = developerName
-                        email = developerEmail
-                    }
-                }
-
-                scm {
-                    connection = scmConnection
-                    developerConnection = scmDeveloperConnection
-                    url = scmUrl
-                }
-
-                organization {
-                    name = 'WebCompere'
-                    url = 'https://github.com/webcompere'
-                }
-            }
-        }
+    signing {
+        active = 'ALWAYS'
+        armored = true
+        secretKey = System.getenv("GPG_PRIVATE_KEY")
+        passphrase = System.getenv("GPG_PASSPHRASE")
     }
 }
