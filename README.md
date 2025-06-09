@@ -1,6 +1,7 @@
 # Spring Properties Cleaner 
 
 ![Maven](https://img.shields.io/badge/apachemaven-C71A36.svg?logo=apachemaven&logoColor=white)
+[![Maven Central Version](https://img.shields.io/maven-central/v/uk.org.webcompere/spring-properties-cleaner-plugin)](https://central.sonatype.com/namespace/uk.org.webcompere)
 ![JavaFX](https://img.shields.io/badge/java-11-white.svg?logo=javafx&logoColor=white)
 [![Build](https://github.com/webcompere/spring-properties-cleaner/actions/workflows/build-actions.yml/badge.svg?branch=main)](https://github.com/webcompere/spring-properties-cleaner/actions/workflows/build-actions.yml)
 [![codecov](https://codecov.io/gh/webcompere/spring-properties-cleaner/graph/badge.svg?token=OlKMD7tq48)](https://codecov.io/gh/webcompere/spring-properties-cleaner)
