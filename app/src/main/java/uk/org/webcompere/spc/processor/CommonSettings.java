@@ -43,6 +43,9 @@ public class CommonSettings {
         // shuffle properties around
         combineProperties(commonFile, otherFiles, config.getCommonProperties(), config.getSort());
 
+        // then slice off any properties duplicated between the common and a non common
+        removeDuplicatesWithCommon(commonFile, otherFiles);
+
         // then put the files together
         return Stream.concat(Stream.of(commonFile), otherFiles.stream()).collect(toList());
     }
@@ -126,5 +129,22 @@ public class CommonSettings {
 
         commonFile.add(toPromote);
         otherFiles.forEach(file -> file.removeIf(key, dominantValue));
+    }
+
+    private static void removeDuplicatesWithCommon(PropertiesFile commonFile, List<PropertiesFile> otherFiles) {
+        for (PropertiesFile other : otherFiles) {
+            PropertiesFile superProperties = new PropertiesFile(new File("super"));
+            commonFile.getSettings().forEach(superProperties::add);
+            other.getSettings().forEach(superProperties::add);
+
+            var duplicates = superProperties.getDuplicates();
+
+            // where there's a duplicate with the common, remove it from the other file
+            // if it matches, because in common mode we always want to avoid duplicating
+            // any property with the common file
+            duplicates.entrySet().stream()
+                    .filter(entry -> allTheSame(entry.getValue().stream().map(Setting::getValue)))
+                    .forEach(entry -> other.remove(entry.getKey()));
+        }
     }
 }

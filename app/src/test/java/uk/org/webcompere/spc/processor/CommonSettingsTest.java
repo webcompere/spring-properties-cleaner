@@ -191,6 +191,24 @@ class CommonSettingsTest {
     }
 
     @Test
+    void whenThereIsNoDominantSettingButOneOfTheSettingsIsInTheCommonAlreadyThenRemovedFromTheChild() {
+        String commonProperty = "server.port";
+
+        PropertiesFile common = createFile("application.properties", Map.of(commonProperty, "8080"));
+        PropertiesFile dev = createFile("application-dev.properties", Map.of(commonProperty, "8080"));
+        PropertiesFile prod = createFile("application-prod.properties", Map.of(commonProperty, "8080"));
+        PropertiesFile staging = createFile("application-staging.properties", Map.of(commonProperty, "8081"));
+        PropertiesFile perf = createFile("application-perf.properties", Map.of(commonProperty, "8081"));
+
+        List<PropertiesFile> result = CommonSettings.process(List.of(common, dev, prod, staging, perf), multipleArgs);
+        var commonResult = result.get(0);
+        var devResult = result.get(1);
+
+        assertThat(commonResult.getLast(commonProperty)).hasValue("8080");
+        assertThat(devResult.getLast(commonProperty)).isEmpty();
+    }
+
+    @Test
     void whenNoSortingIsOnThenCommonPropertiesFileInNaturalOrder() {
         var someProperties = new LinkedHashMap<String, String>();
         someProperties.put("server.port", "8080");
