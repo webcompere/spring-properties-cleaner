@@ -36,9 +36,10 @@ jobs:
       - name: Release to maven central on main
         if: github.ref == 'refs/heads/main'
         env:
-          GPG_TTY: '$(tty)'
           MAVEN_USERNAME: ${{secrets.OSSRH_USERNAME}}
           MAVEN_PASSWORD: ${{secrets.OSSRH_TOKEN}}
-        run: ./gradlew publishAggregationToCentralPortal
+        run: |
+          export GPG_TTY=`tty`
+          ./gradlew publishAggregationToCentralPortal
 
 
