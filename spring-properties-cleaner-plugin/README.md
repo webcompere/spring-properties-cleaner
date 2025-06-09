@@ -6,7 +6,7 @@ Add the scanner to the POM file like this:
 <plugin>
   <groupId>uk.org.webcompere</groupId>
   <artifactId>spring-properties-cleaner-plugin</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.3</version>
   <executions>
     <execution>
 	  <goals>

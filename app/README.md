@@ -1,11 +1,18 @@
 # Spring Properties Cleaner CLI
 
+## Build or Download
+
+We can run `./gradlew clean build` to build the app locally. Then the file can be taken from the `build/libs` directory.
+
+Alternatively we can visit maven central to download it. From the [versions page](https://central.sonatype.com/artifact/uk.org.webcompere/spring-properties-cleaner-app/versions)
+choosing to _Browse_ will allow us to find the latest jar, which can be downloaded and added to our path somewhere.
+
 ## Execute
 
-After building the application we can run it to get help:
+When we have the jar file on our path, we can run it to get help:
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar --help
+java -jar java -jar spring-properties-cleaner-app-1.0.3.jar --help
 ```
 ### CI/CD
 
@@ -18,14 +25,14 @@ exit with non-zero if there are any errors.
 We can run the tool to scan a properties file:
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
+java -jar java -jar spring-properties-cleaner-app-1.0.3.jar \
    --read path/to/resources/myproperties.properties
 ```
 
 or a directory of them:
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
+java -jar java -jar spring-properties-cleaner-app-1.0.3.jar \ 
    --read path/to/resources
 ```
 
@@ -40,7 +47,7 @@ A scan will exit with code 1 if the file contains errors. The scan will also war
 We can fix things:
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
+java -jar java -jar spring-properties-cleaner-app-1.0.3.jar \ 
    --action fix \
    --read path/to/resources
 ```
@@ -57,7 +64,7 @@ Fixing will:
 This will output new files to the console unless we add `--apply`
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
+java -jar java -jar spring-properties-cleaner-app-1.0.3.jar \ 
     --action fix \
     --apply \
     --read path/to/resources
@@ -71,7 +78,7 @@ as much as possible while also bringing up values with matching paths to be toge
 nothing.
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
+java -jar java -jar spring-properties-cleaner-app-1.0.3.jar \ 
     --action fix \
     --sort clustered \
     --read path/to/resources
@@ -86,7 +93,7 @@ one key doesn't share the same first-level prefix as another. This makes sense w
 using a sort:
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
+java -jar java -jar spring-properties-cleaner-app-1.0.3.jar \ 
     --action fix \
     --sort clustered \
     --whitespace section \
@@ -134,7 +141,7 @@ This can be achieved using the `inlinePrefix` option, providing
 a regular expression as the prefix matcher.
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \ 
+java -jar java -jar spring-properties-cleaner-app-1.0.3.jar \ 
     --action fix \
     --sort clustered \
     --inlinePrefix https?:// \
@@ -158,7 +165,7 @@ multiple modes:
 - `multiple` - find values that are in more than one place and bring them into the root properties, even if they're different in some places
 
 ```bash
-java -jar app/build/libs/spring-properties-cleaner-1.0.jar \
+java -jar java -jar spring-properties-cleaner-app-1.0.3.jar \
     --action fix \
     --common full \
     --read path/to/resources

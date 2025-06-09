@@ -1,7 +1,7 @@
 # Spring Properties Cleaner 
 
 ![Maven](https://img.shields.io/badge/apachemaven-C71A36.svg?logo=apachemaven&logoColor=white)
-[![Maven Central Version](https://img.shields.io/maven-central/v/uk.org.webcompere/spring-properties-cleaner-plugin)](https://central.sonatype.com/namespace/uk.org.webcompere)
+[![Maven Central Version](https://img.shields.io/maven-central/v/uk.org.webcompere/spring-properties-cleaner-plugin)](https://central.sonatype.com/artifact/uk.org.webcompere/spring-properties-cleaner-plugin)
 ![JavaFX](https://img.shields.io/badge/java-11-white.svg?logo=javafx&logoColor=white)
 [![Build](https://github.com/webcompere/spring-properties-cleaner/actions/workflows/build-actions.yml/badge.svg?branch=main)](https://github.com/webcompere/spring-properties-cleaner/actions/workflows/build-actions.yml)
 [![codecov](https://codecov.io/gh/webcompere/spring-properties-cleaner/graph/badge.svg?token=OlKMD7tq48)](https://codecov.io/gh/webcompere/spring-properties-cleaner)
@@ -60,19 +60,10 @@ running everything in properties files, then the maven plugin can enforce
 the settings you've used to fix the file when scanning, and can apply fresh
 fixes at your scan level if something has gone wrong in the current version.
 
-## TODO
-
-- In YAML mode allow for a minimum length of property to be tree-ified if solo
-- In YAML handle telescoping properties like this:
-  ```yml
-  server: myServer
-  server.port: 8080
-  ```
-
 ## Contributing
 
-This project is still incubating. Please feel free to raise issues with suggestions or questions. Not ready 
-to receive PRs at the moment.
+Please feel free to raise issues with suggestions or questions. Please give examples of your properties files. Feel free to fork
+and raise any PRs that might be useful.
 
 ## License
 
