@@ -20,6 +20,10 @@ plugins {
     id 'maven-publish' 
 }
 
+mavenPlugin {
+
+}
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -88,6 +92,13 @@ tasks.jacocoTestReport {
     }
 }
 
+mavenPlugin {
+    name = 'Spring Properties Cleaner'
+    artifactId = 'spring-properties-cleaner-plugin'
+    groupId = 'uk.org.webcompere'
+    description = project.description
+}
+
 publishing {
     publications {
         maven(MavenPublication) { // import org.gradle.api.publish.maven.MavenPublication if needed
@@ -131,6 +142,5 @@ publishing {
                 }
             }
         }
-
     }
 }
