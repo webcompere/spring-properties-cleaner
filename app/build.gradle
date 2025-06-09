@@ -37,8 +37,8 @@ spotless {
 }
 
 signing {
-//    useInMemoryPgpKeys(null, System.getenv("GPG_PRIVATE_KEY")?.replace("\\n", "\n"), System.getenv("GPG_PASSPHRASE"))
-    useGpgCmd()
+    useInMemoryPgpKeys(null, System.getenv("GPG_PRIVATE_KEY")?.replace("\\n", "\n"), System.getenv("GPG_PASSPHRASE"))
+//    useGpgCmd()
     sign publishing.publications
 }
 
