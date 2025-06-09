@@ -9,6 +9,7 @@ plugins {
     id("org.shipkit.shipkit-changelog") version "2.0.1"
     id("org.shipkit.shipkit-github-release") version "2.0.1"
     id 'maven-publish'
+    id("com.gradleup.nmcp.aggregation") version "0.1.4"
 }
 
 tasks.named("generateChangelog") {
@@ -87,4 +88,17 @@ allprojects {
             }
         }
     }
+
+    nmcpAggregation {
+        centralPortal {
+            username = System.getenv("MAVEN_USERNAME")
+            password = System.getenv("MAVEN_PASSWORD")
+            // TODO  "AUTOMATIC"
+            publishingType = "USER_MANAGED"
+        }
+
+        // Publish all projects that apply the 'maven-publish' plugin
+        publishAllProjectsProbablyBreakingProjectIsolation()
+    }
+
 }

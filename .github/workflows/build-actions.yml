@@ -38,6 +38,6 @@ jobs:
         env:
           MAVEN_USERNAME: ${{secrets.OSSRH_USERNAME}}
           MAVEN_PASSWORD: ${{secrets.OSSRH_TOKEN}}
-        run: ./gradlew publish
+        run: ./gradlew publishAggregationToCentralPortal
 
 
