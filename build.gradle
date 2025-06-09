@@ -31,8 +31,7 @@ allprojects {
         centralPortal {
             username = System.getenv("MAVEN_USERNAME")
             password = System.getenv("MAVEN_PASSWORD")
-            // TODO  "AUTOMATIC"
-            publishingType = "USER_MANAGED"
+            publishingType = "AUTOMATIC"
         }
 
         // Publish all projects that apply the 'maven-publish' plugin
