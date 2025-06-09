@@ -26,64 +26,45 @@ tasks.named("githubRelease") {
     newTagRevision = System.getenv("GITHUB_SHA")   // using an env var automatically exported by Github Actions
 }
 
-allprojects {
-    // Define common properties that can be used in the POM metadata
-    ext {
-        developerId = 'webcompere'
-        developerName = 'Ashley Frieze' // Or your name
-        developerEmail = 'ashley' // Your email
-        projectUrl = 'https://github.com/webcompere/spring-properties-cleaner'
-        licenseName = 'MIT License'
-        licenseUrl = 'https://github.com/webcompere/spring-properties-cleaner?tab=MIT-1-ov-file#readme'
-        scmUrl = 'https://github.com/webcompere/spring-properties-cleaner.git'
-        scmConnection = 'scm:git:https://github.com/webcompere/spring-properties-cleaner.git'
-        scmDeveloperConnection = 'scm:git:git@github.com:webcompere/spring-properties-cleaner.git'
-    }
-
+subprojects {
     // Configure all publications
     publishing {
-        repositories {
-            maven {
-                name = "CENTRAL"
-                url = "https://central.sonatype.com/api/v1/publisher/upload"
-                credentials {
-                    username = System.getenv("MAVEN_USERNAME")
-                    password = System.getenv("MAVEN_PASSWORD")
-                }
-            }
-        }
+        plugins.withId('maven-publish') {
+            afterEvaluate {
+                publications.withType(MavenPublication) {
+                    pom {
+                        name = project.name // Use the project's name for the POM name
+                        description = 'Spring Properties Cleaner - A utility to clean properties from Spring Boot applications.'
+                        // General description for the project
+                        url = 'https://github.com/webcompere/spring-properties-cleaner'
 
-        publications.withType(MavenPublication) {
-            pom {
-                name = project.name // Use the project's name for the POM name
-                description = 'Spring Properties Cleaner - A utility to clean properties from Spring Boot applications.' // General description for the project
-                url = projectUrl
+                        licenses {
+                            license {
+                                name = 'MIT License'
+                                url = 'https://github.com/webcompere/spring-properties-cleaner?tab=MIT-1-ov-file#readme'
+                                distribution = 'repo' // Common distribution type
+                            }
+                        }
 
-                licenses {
-                    license {
-                        name = licenseName
-                        url = licenseUrl
-                        distribution = 'repo' // Common distribution type
+                        developers {
+                            developer {
+                                id = 'webcompere'
+                                name = 'Ashley Frieze'
+                                email = 'ashley@ashleyfrieze.co.uk'
+                            }
+                        }
+
+                        scm {
+                            connection = 'scm:git:https://github.com/webcompere/spring-properties-cleaner.git'
+                            developerConnection = 'scm:git:git@github.com:webcompere/spring-properties-cleaner.git'
+                            url = 'https://github.com/webcompere/spring-properties-cleaner.git'
+                        }
+
+                        organization {
+                            name = 'WebCompere'
+                            url = 'https://github.com/webcompere'
+                        }
                     }
-                }
-
-                developers {
-                    developer {
-                        id = developerId
-                        name = developerName
-                        email = developerEmail
-                    }
-                }
-
-                scm {
-                    connection = scmConnection
-                    developerConnection = scmDeveloperConnection
-                    url = scmUrl
-                }
-
-                organization {
-                    name = 'WebCompere'
-                    url = 'https://github.com/webcompere'
                 }
             }
         }
