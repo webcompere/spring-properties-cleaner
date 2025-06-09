@@ -26,50 +26,7 @@ tasks.named("githubRelease") {
     newTagRevision = System.getenv("GITHUB_SHA")   // using an env var automatically exported by Github Actions
 }
 
-subprojects {
-    // Configure all publications
-    publishing {
-        plugins.withId('maven-publish') {
-            afterEvaluate {
-                publications.withType(MavenPublication) {
-                    pom {
-                        name = project.name // Use the project's name for the POM name
-                        description = 'Spring Properties Cleaner - A utility to clean properties from Spring Boot applications.'
-                        // General description for the project
-                        url = 'https://github.com/webcompere/spring-properties-cleaner'
-
-                        licenses {
-                            license {
-                                name = 'MIT License'
-                                url = 'https://github.com/webcompere/spring-properties-cleaner?tab=MIT-1-ov-file#readme'
-                                distribution = 'repo' // Common distribution type
-                            }
-                        }
-
-                        developers {
-                            developer {
-                                id = 'webcompere'
-                                name = 'Ashley Frieze'
-                                email = 'ashley@ashleyfrieze.co.uk'
-                            }
-                        }
-
-                        scm {
-                            connection = 'scm:git:https://github.com/webcompere/spring-properties-cleaner.git'
-                            developerConnection = 'scm:git:git@github.com:webcompere/spring-properties-cleaner.git'
-                            url = 'https://github.com/webcompere/spring-properties-cleaner.git'
-                        }
-
-                        organization {
-                            name = 'WebCompere'
-                            url = 'https://github.com/webcompere'
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+allprojects {
     nmcpAggregation {
         centralPortal {
             username = System.getenv("MAVEN_USERNAME")
@@ -81,5 +38,4 @@ subprojects {
         // Publish all projects that apply the 'maven-publish' plugin
         publishAllProjectsProbablyBreakingProjectIsolation()
     }
-
 }

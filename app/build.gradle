@@ -37,7 +37,8 @@ spotless {
 }
 
 signing {
-    useInMemoryPgpKeys(null, System.getenv("GPG_PRIVATE_KEY")?.replace("\\n", "\n"), System.getenv("GPG_PASSPHRASE"))
+//    useInMemoryPgpKeys(null, System.getenv("GPG_PRIVATE_KEY")?.replace("\\n", "\n"), System.getenv("GPG_PASSPHRASE"))
+    useGpgCmd()
     sign publishing.publications
 }
 
@@ -110,6 +111,40 @@ publishing {
             }
             artifact tasks.named('sourcesJar')
             artifact tasks.named('javadocJar')
+
+            pom {
+                name = project.name // Use the project's name for the POM name
+                description = 'Spring Properties Cleaner - A utility to clean properties from Spring Boot applications.'
+                // General description for the project
+                url = 'https://github.com/webcompere/spring-properties-cleaner'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/webcompere/spring-properties-cleaner?tab=MIT-1-ov-file#readme'
+                        distribution = 'repo' // Common distribution type
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'webcompere'
+                        name = 'Ashley Frieze'
+                        email = 'ashley@ashleyfrieze.co.uk'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:https://github.com/webcompere/spring-properties-cleaner.git'
+                    developerConnection = 'scm:git:git@github.com:webcompere/spring-properties-cleaner.git'
+                    url = 'https://github.com/webcompere/spring-properties-cleaner.git'
+                }
+
+                organization {
+                    name = 'WebCompere'
+                    url = 'https://github.com/webcompere'
+                }
+            }
         }
     }
 }
