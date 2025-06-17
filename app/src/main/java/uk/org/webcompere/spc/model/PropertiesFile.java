@@ -3,6 +3,7 @@ package uk.org.webcompere.spc.model;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static uk.org.webcompere.spc.streams.Streams.concatAll;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -128,19 +129,12 @@ public class PropertiesFile {
                 whiteSpaceMode == SpcArgs.WhiteSpaceMode.section ? new SectionBreaker() : line -> Optional.empty();
         return Stream.concat(
                         settings.stream()
-                                .flatMap(setting -> Stream.concat(
+                                .flatMap(setting -> concatAll(
+                                        lineInserter.apply(setting.getFullPath()).stream(),
                                         getCommentsStream(whiteSpaceMode, setting),
-                                        getSettingsStream(setting, lineInserter))),
+                                        Stream.of(setting.getFullPath() + "=" + setting.getValue()))),
                         trailingComments.stream())
                 .collect(toList());
-    }
-
-    private Stream<String> getSettingsStream(Setting setting, Function<String, Optional<String>> lineInserter) {
-        return Stream.of(
-                        lineInserter.apply(setting.getFullPath()),
-                        Optional.of(setting.getFullPath() + "=" + setting.getValue()))
-                .filter(Optional::isPresent)
-                .map(Optional::get);
     }
 
     private Stream<String> getCommentsStream(SpcArgs.WhiteSpaceMode whiteSpaceMode, Setting setting) {

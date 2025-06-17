@@ -37,7 +37,19 @@ For configuration, add properties:
   </configuration>
 ```
 
-> See the [main README](../README.md) for how these options work
+| Configuration | Option       | How it works                                                                                                                                         |
+|---------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `sort`        | `none`       | No sorting applied                                                                                                                                   |
+| `sort`        | `sorted`     | Alpha-numeric sorting is applied; it handles numbers within the name and sorts them numerically, rather than lexically                               |
+| `sort`        | `clustered`  | While preserving the sort of the keys as much as possible, any keys which share a prefix are pulled up to join their family members                  |
+| `common` | `none`       | No `application.properties` file is created                                                                                                          |
+| `common` | `full`       | Any key/value which is present in all files with the same value should be promoted to `application.properties`                                       |
+| `common` | `consistent` | When the key/value always has the same value where it appears, then it should be promoted to `application.properties`, even if it's not in all files |
+| `common` | `multiple`   | Where a key/value appears in multiple files, then the most commonly used value should be in `application.properties`                                 |
+| `whitespace` | `preserve`   | Do not touch any vertical whitespace                                                                                                                 |
+| `whitespace` | `remove`     | Remove vertical whitespace between keys |
+| `whitespace` | `section`    | Insert a single line of whitespace between keys where the first level prefix is different |
+| `inlinePrefix` | \<regex>     | Provide a regular expression that indicates what the expected eligible prefix before a key might be. If this prefix is the same for all times the key appears, then it's inlined into the key |
 
 ## Goals
 

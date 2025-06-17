@@ -82,6 +82,16 @@ class PropertiesFileTest {
     }
 
     @Test
+    void willInsertSectionBreakBetweenSectionsWithCommentsInTheRightPlace() {
+        file.add(new Setting(1, List.of("", "", ""), "spring.server", "b"));
+        file.add(new Setting(2, List.of("", "", ""), "spring.port", "8080"));
+        file.add(new Setting(2, List.of("# Comment here"), "redis.port", "9000"));
+
+        assertThat(file.toLines(SpcArgs.WhiteSpaceMode.section))
+                .containsExactly("spring.server=b", "spring.port=8080", "", "# Comment here", "redis.port=9000");
+    }
+
+    @Test
     void fileWithOneSettingAndTrailingCommentsCreatesLines() {
         file.add(new Setting(1, List.of(), "server.port", "8080"));
         file.addTrailingComments(List.of("", "# foobar"));
