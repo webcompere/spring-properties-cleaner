@@ -10,6 +10,8 @@
 
 Utility to clean up spring properties files.
 
+> Tutorial for the Maven Plugin available [over on Baeldung](https://www.baeldung.com/spring-properties-cleaner)
+
 This is available as:
 
 - [Maven Plugin](./spring-properties-cleaner-plugin/README.md)
